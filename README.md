@@ -10,9 +10,11 @@
 
 **A professional React Native mobile application for SavedFeast - an innovative food delivery platform that combats food waste by connecting restaurants with consumers.**
 
-[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=flat-square)](https://github.com/yourusername/savedfeast-mobile)
-[![Code Coverage](https://img.shields.io/badge/Code%20Coverage-85%25-brightgreen?style=flat-square)](https://github.com/yourusername/savedfeast-mobile)
-[![Dependencies](https://img.shields.io/badge/Dependencies-Up%20to%20Date-brightgreen?style=flat-square)](https://github.com/yourusername/savedfeast-mobile)
+[![CI/CD Pipeline](https://github.com/GhadiSaab/savedfeast-mobile/workflows/CI%20Pipeline/badge.svg)](https://github.com/GhadiSaab/savedfeast-mobile/actions/workflows/ci.yml)
+[![Code Coverage](https://img.shields.io/badge/Code%20Coverage-50%25-brightgreen?style=flat-square)](https://github.com/GhadiSaab/savedfeast-mobile)
+[![Dependencies](https://img.shields.io/badge/Dependencies-Up%20to%20Date-brightgreen?style=flat-square)](https://github.com/GhadiSaab/savedfeast-mobile)
+[![React Native Version](https://img.shields.io/badge/React%20Native-0.79.6-61DAFB?style=flat-square&logo=react&logoColor=black)](https://github.com/GhadiSaab/savedfeast-mobile)
+[![Expo Version](https://img.shields.io/badge/Expo-53.0.22-000020?style=flat-square&logo=expo&logoColor=white)](https://github.com/GhadiSaab/savedfeast-mobile)
 
 </div>
 
@@ -495,8 +497,11 @@ For support and questions:
 
 **Built with ❤️ for a sustainable future**
 
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/savedfeast-mobile?style=social)](https://github.com/yourusername/savedfeast-mobile)
-[![GitHub forks](https://img.shields.io/github/forks/yourusername/savedfeast-mobile?style=social)](https://github.com/yourusername/savedfeast-mobile)
-[![GitHub issues](https://img.shields.io/github/issues/yourusername/savedfeast-mobile)](https://github.com/yourusername/savedfeast-mobile/issues)
+[![GitHub stars](https://img.shields.io/github/stars/GhadiSaab/savedfeast-mobile?style=social)](https://github.com/GhadiSaab/savedfeast-mobile)
+[![GitHub forks](https://img.shields.io/github/forks/GhadiSaab/savedfeast-mobile?style=social)](https://github.com/GhadiSaab/savedfeast-mobile)
+[![GitHub issues](https://img.shields.io/github/issues/GhadiSaab/savedfeast-mobile)](https://github.com/GhadiSaab/savedfeast-mobile/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/GhadiSaab/savedfeast-mobile)](https://github.com/GhadiSaab/savedfeast-mobile/pulls)
+[![GitHub license](https://img.shields.io/github/license/GhadiSaab/savedfeast-mobile)](https://github.com/GhadiSaab/savedfeast-mobile/blob/main/LICENSE)
+[![GitHub last commit](https://img.shields.io/github/last-commit/GhadiSaab/savedfeast-mobile)](https://github.com/GhadiSaab/savedfeast-mobile/commits/main)
 
 </div>

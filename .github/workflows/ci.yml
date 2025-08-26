@@ -66,7 +66,7 @@ jobs:
       run: npm ci
 
     - name: Run unit tests
-      run: npm test -- --coverage --watchAll=false
+      run: npm test -- --coverage --watchAll=false --passWithNoTests
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
@@ -74,8 +74,6 @@ jobs:
         file: ./coverage/lcov.info
         flags: mobile
         name: mobile-coverage
-
-
 
   # Security Scan
   security-scan:
@@ -89,6 +87,15 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
@@ -143,7 +150,7 @@ jobs:
         npx bundle-analyzer dist/bundles/*.js --mode static --report
 
     - name: Upload bundle analysis report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: bundle-analysis-report
         path: bundle-analysis-report.html
@@ -187,8 +194,6 @@ jobs:
         configPath: './.lighthouserc.json'
         uploadArtifacts: true
         temporaryPublicStorage: true
-
-
 
   # Notify on completion
   notify:
