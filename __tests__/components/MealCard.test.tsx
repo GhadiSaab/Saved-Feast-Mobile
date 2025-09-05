@@ -1,30 +1,305 @@
-// Simple test for MealCard component
-// This test will be expanded once we have proper testing library setup
+import React from 'react';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { MealCard } from '../../components/MealCard';
+import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
+import mealService from '../../lib/meals';
+import { router } from 'expo-router';
 
-describe('MealCard Component', () => {
-  it('should have proper meal data structure', () => {
-    const mockMeal = {
-      id: 1,
-      name: 'Test Meal',
-      description: 'A delicious test meal',
-      price: 15.99,
-      image: 'https://example.com/test-image.jpg',
-      category: 'Test Category',
-      restaurant_id: 1,
-      is_available: true,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z',
-    };
+// Mock the context hooks
+jest.mock('../../context/AuthContext');
+jest.mock('../../context/CartContext');
 
-    expect(mockMeal).toHaveProperty('id');
-    expect(mockMeal).toHaveProperty('name');
-    expect(mockMeal).toHaveProperty('price');
-    expect(mockMeal.price).toBe(15.99);
+// Mock the meals service
+jest.mock('../../lib/meals', () => ({
+  toggleFavorite: jest.fn(),
+}));
+
+// Mock expo-router
+jest.mock('expo-router', () => ({
+  router: {
+    push: jest.fn(),
+  },
+}));
+
+// Mock expo-image
+jest.mock('expo-image', () => ({
+  Image: 'Image',
+}));
+
+// Mock Dimensions is handled in jest.setup.js
+
+const mockMeal = {
+  id: 1,
+  title: 'Delicious Pizza',
+  description: 'A mouth-watering pizza with fresh ingredients',
+  current_price: 15.99,
+  original_price: 20.99,
+  image: 'https://example.com/pizza.jpg',
+  available_from: '2024-01-01T10:00:00Z',
+  available_until: '2024-01-01T22:00:00Z',
+  restaurant: {
+    name: 'Pizza Palace',
+  },
+  category: {
+    id: 1,
+    name: 'Italian',
+  },
+};
+
+describe('MealCard', () => {
+  const mockAddToCart = jest.fn();
+  const mockToggleFavorite = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    
+    (useAuth as jest.Mock).mockReturnValue({
+      isAuthenticated: true,
+    });
+    
+    (useCart as jest.Mock).mockReturnValue({
+      addToCart: mockAddToCart,
+    });
+    
+    (mealService.toggleFavorite as jest.Mock).mockResolvedValue({
+      is_favorited: true,
+      meal_id: 1,
+    });
   });
 
-  it('should validate meal price format', () => {
-    const price = 15.99;
-    expect(typeof price).toBe('number');
-    expect(price).toBeGreaterThan(0);
+  it('should render meal information correctly', () => {
+    const { getByText } = render(
+      <MealCard meal={mockMeal} />
+    );
+
+    expect(getByText('Delicious Pizza')).toBeTruthy();
+    expect(getByText('A mouth-watering pizza with fresh ingredients')).toBeTruthy();
+    expect(getByText('€15.99')).toBeTruthy();
+    expect(getByText('Pizza Palace')).toBeTruthy();
+  });
+
+  it('should display savings percentage when original price is higher', () => {
+    const { getByText } = render(
+      <MealCard meal={mockMeal} />
+    );
+
+    expect(getByText('24% OFF')).toBeTruthy();
+  });
+
+  it('should not display savings when original price is not available', () => {
+    const mealWithoutOriginalPrice = {
+      ...mockMeal,
+      original_price: null,
+    };
+
+    const { queryByText } = render(
+      <MealCard meal={mealWithoutOriginalPrice} />
+    );
+
+    expect(queryByText('% OFF')).toBeNull();
+  });
+
+  it('should call onPress when card is pressed', () => {
+    const mockOnPress = jest.fn();
+    const { getByTestId } = render(
+      <MealCard meal={mockMeal} onPress={mockOnPress} />
+    );
+
+    fireEvent.press(getByTestId('meal-card'));
+    expect(mockOnPress).toHaveBeenCalled();
+  });
+
+  it('should navigate to meal detail when card is pressed without onPress prop', () => {
+    const { getByTestId } = render(
+      <MealCard meal={mockMeal} />
+    );
+
+    fireEvent.press(getByTestId('meal-card'));
+    expect(router.push).toHaveBeenCalledWith('/meal/1');
+  });
+
+  it('should add meal to cart when Add to Cart button is pressed', () => {
+    const { getByText } = render(
+      <MealCard meal={mockMeal} />
+    );
+
+    fireEvent.press(getByText('Add to Cart'));
+    expect(mockAddToCart).toHaveBeenCalledWith(mockMeal);
+  });
+
+  it('should show success animation when meal is added to cart', async () => {
+    const { getByText, queryByText } = render(
+      <MealCard meal={mockMeal} />
+    );
+
+    fireEvent.press(getByText('Add to Cart'));
+    
+    await waitFor(() => {
+      expect(queryByText('Added!')).toBeTruthy();
+    });
+  });
+
+  it('should toggle favorite when heart icon is pressed', async () => {
+    const mockOnFavoriteToggle = jest.fn();
+    const { getByTestId } = render(
+      <MealCard 
+        meal={mockMeal} 
+        onFavoriteToggle={mockOnFavoriteToggle}
+      />
+    );
+
+    fireEvent.press(getByTestId('favorite-button'));
+    
+    await waitFor(() => {
+      expect(mealService.toggleFavorite).toHaveBeenCalledWith(1);
+      expect(mockOnFavoriteToggle).toHaveBeenCalledWith(1, true);
+    });
+  });
+
+  it('should handle favorite toggle error gracefully', async () => {
+    (mealService.toggleFavorite as jest.Mock).mockRejectedValue(new Error('API Error'));
+    
+    const { getByTestId } = render(
+      <MealCard meal={mockMeal} />
+    );
+
+    fireEvent.press(getByTestId('favorite-button'));
+    
+    // Should not throw error
+    await waitFor(() => {
+      expect(mealService.toggleFavorite).toHaveBeenCalledWith(1);
+    });
+  });
+
+  it('should show correct favorite icon based on favorited state', () => {
+    const { getByTestId } = render(
+      <MealCard meal={mockMeal} isFavorited={true} />
+    );
+
+    // Should show filled heart when favorited
+    expect(getByTestId('favorite-icon').props.name).toBe('heart');
+  });
+
+  it('should show outline heart when not favorited', () => {
+    const { getByTestId } = render(
+      <MealCard meal={mockMeal} isFavorited={false} />
+    );
+
+    // Should show outline heart when not favorited
+    expect(getByTestId('favorite-icon').props.name).toBe('heart-outline');
+  });
+
+  it('should format pickup time correctly', () => {
+    const { getByText } = render(
+      <MealCard meal={mockMeal} />
+    );
+
+    // Should show pickup time range
+    expect(getByText(/10:00 AM - 10:00 PM/)).toBeTruthy();
+  });
+
+  it('should handle missing pickup time gracefully', () => {
+    const mealWithoutTime = {
+      ...mockMeal,
+      available_from: null,
+      available_until: null,
+    };
+
+    const { queryByText } = render(
+      <MealCard meal={mealWithoutTime} />
+    );
+
+    // Should not show pickup time
+    expect(queryByText(/AM - PM/)).toBeNull();
+  });
+
+  it('should show loading state when toggling favorite', async () => {
+    let resolvePromise: (value: any) => void;
+    const promise = new Promise((resolve) => {
+      resolvePromise = resolve;
+    });
+    
+    (mealService.toggleFavorite as jest.Mock).mockReturnValue(promise);
+
+    const { getByTestId } = render(
+      <MealCard meal={mockMeal} />
+    );
+
+    fireEvent.press(getByTestId('favorite-button'));
+    
+    // Should show loading state
+    expect(getByTestId('favorite-loading')).toBeTruthy();
+    
+    // Resolve the promise
+    resolvePromise!({ is_favorited: true, meal_id: 1 });
+    
+    await waitFor(() => {
+      expect(getByTestId('favorite-loading')).toBeFalsy();
+    });
+  });
+
+  it('should handle authentication requirement for favorites', () => {
+    (useAuth as jest.Mock).mockReturnValue({
+      isAuthenticated: false,
+    });
+
+    const { getByTestId } = render(
+      <MealCard meal={mockMeal} />
+    );
+
+    fireEvent.press(getByTestId('favorite-button'));
+    
+    // Should navigate to login
+    expect(router.push).toHaveBeenCalledWith('/(auth)/login');
+  });
+
+  it('should handle authentication requirement for adding to cart', () => {
+    (useAuth as jest.Mock).mockReturnValue({
+      isAuthenticated: false,
+    });
+
+    const { getByText } = render(
+      <MealCard meal={mockMeal} />
+    );
+
+    fireEvent.press(getByText('Add to Cart'));
+    
+    // Should navigate to login
+    expect(router.push).toHaveBeenCalledWith('/(auth)/login');
+  });
+
+  it('should display category information', () => {
+    const { getByText } = render(
+      <MealCard meal={mockMeal} />
+    );
+
+    expect(getByText('Italian')).toBeTruthy();
+  });
+
+  it('should handle missing category gracefully', () => {
+    const mealWithoutCategory = {
+      ...mockMeal,
+      category: null,
+    };
+
+    const { queryByText } = render(
+      <MealCard meal={mealWithoutCategory} />
+    );
+
+    expect(queryByText('Italian')).toBeNull();
+  });
+
+  it('should handle missing restaurant gracefully', () => {
+    const mealWithoutRestaurant = {
+      ...mockMeal,
+      restaurant: null,
+    };
+
+    const { queryByText } = render(
+      <MealCard meal={mealWithoutRestaurant} />
+    );
+
+    expect(queryByText('Pizza Palace')).toBeNull();
   });
 });

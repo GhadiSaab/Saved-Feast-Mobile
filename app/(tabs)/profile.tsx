@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Switch } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -16,11 +16,11 @@ export default function ProfileTabScreen() {
   const colors = Colors[colorScheme ?? 'light'];
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   
-  // Settings state
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [darkModeEnabled, setDarkModeEnabled] = useState(colorScheme === 'dark');
+  // Settings state - these will be used in future settings implementation
+  // const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  // const [emailNotifications, setEmailNotifications] = useState(true);
+  // const [pushNotifications, setPushNotifications] = useState(true);
+  // const [darkModeEnabled, setDarkModeEnabled] = useState(colorScheme === 'dark');
 
   const handleLogout = async () => {
     Alert.alert(

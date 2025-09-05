@@ -40,7 +40,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
       // Redirect to home if authenticated and trying to access auth routes
       router.replace('/(tabs)');
     }
-  }, [isAuthenticated, segments, isLoading]);
+  }, [isAuthenticated, segments, isLoading, router]);
 
   if (isLoading) {
     // Show loading screen while checking authentication

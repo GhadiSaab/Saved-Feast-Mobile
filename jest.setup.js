@@ -78,6 +78,11 @@ jest.mock('expo-router', () => ({
   }),
   useLocalSearchParams: () => ({}),
   Link: 'Link',
+  router: {
+    push: jest.fn(),
+    replace: jest.fn(),
+    back: jest.fn(),
+  },
 }));
 
 // Mock @tanstack/react-query
@@ -107,6 +112,90 @@ jest.mock('axios', () => ({
       response: { use: jest.fn() },
     },
   })),
+}));
+
+// Mock useColorScheme hook
+jest.mock('./hooks/useColorScheme', () => ({
+  useColorScheme: jest.fn(() => 'light'),
+}));
+
+// Mock ThemedText component
+jest.mock('./components/ThemedText', () => ({
+  ThemedText: 'ThemedText',
+}));
+
+// Mock @/components/ThemedText (alias)
+jest.mock('@/components/ThemedText', () => ({
+  ThemedText: 'ThemedText',
+}));
+
+// Mock @expo/vector-icons
+jest.mock('@expo/vector-icons', () => ({
+  Ionicons: 'Ionicons',
+  MaterialIcons: 'MaterialIcons',
+  FontAwesome: 'FontAwesome',
+}));
+
+// Mock react-native-safe-area-context
+jest.mock('react-native-safe-area-context', () => ({
+  SafeAreaView: 'SafeAreaView',
+  useSafeAreaInsets: jest.fn(() => ({ top: 0, bottom: 0, left: 0, right: 0 })),
+}));
+
+// Mock @react-navigation/bottom-tabs
+jest.mock('@react-navigation/bottom-tabs', () => ({
+  useBottomTabBarHeight: jest.fn(() => 0),
+}));
+
+// Mock react-native-reanimated
+jest.mock('react-native-reanimated', () => ({
+  default: {
+    View: 'View',
+    Text: 'Text',
+    ScrollView: 'ScrollView',
+  },
+  useSharedValue: jest.fn((value) => ({ value })),
+  withRepeat: jest.fn((animation, iterations) => animation),
+  withTiming: jest.fn((value, config) => value),
+  withSequence: jest.fn((...animations) => animations[0]),
+  useAnimatedStyle: jest.fn((style) => style),
+  Easing: {
+    linear: jest.fn(),
+  },
+}));
+
+// Mock react-native Dimensions and StyleSheet
+jest.mock('react-native', () => ({
+  View: 'View',
+  Text: 'Text',
+  ScrollView: 'ScrollView',
+  TouchableOpacity: 'TouchableOpacity',
+  TouchableHighlight: 'TouchableHighlight',
+  TouchableWithoutFeedback: 'TouchableWithoutFeedback',
+  FlatList: 'FlatList',
+  Image: 'Image',
+  TextInput: 'TextInput',
+  Alert: {
+    alert: jest.fn(),
+  },
+  Dimensions: {
+    get: jest.fn(() => ({ width: 400, height: 800 })),
+  },
+  StyleSheet: {
+    create: jest.fn((styles) => styles),
+    flatten: jest.fn((style) => {
+      if (Array.isArray(style)) {
+        return style.reduce((acc, s) => ({ ...acc, ...s }), {});
+      }
+      return style || {};
+    }),
+  },
+  Platform: {
+    OS: 'ios',
+    select: jest.fn((obj) => obj.ios || obj.default),
+  },
+  StatusBar: 'StatusBar',
+  SafeAreaView: 'SafeAreaView',
 }));
 
 // Global test setup

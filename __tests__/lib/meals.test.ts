@@ -1,166 +1,311 @@
-// Meals API tests
+import mealService, { Meal, FilterOptions, MealFilters, ApiResponse } from '../../lib/meals';
+import api from '../../lib/api';
 
-describe('Meals API', () => {
-  describe('Meal data structure', () => {
-    it('should have proper meal object structure', () => {
-      const mockMeal = {
-        id: 1,
-        name: 'Margherita Pizza',
-        description: 'Classic tomato and mozzarella pizza',
-        price: 18.99,
-        image: 'https://example.com/pizza.jpg',
-        category: 'Pizza',
-        restaurant_id: 1,
-        is_available: true,
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z',
+// Mock the api module
+jest.mock('../../lib/api', () => ({
+  get: jest.fn(),
+  post: jest.fn(),
+}));
+
+// Mock console methods to avoid noise in tests
+const originalConsoleLog = console.log;
+const originalConsoleError = console.error;
+
+beforeAll(() => {
+  console.log = jest.fn();
+  console.error = jest.fn();
+});
+
+afterAll(() => {
+  console.log = originalConsoleLog;
+  console.error = originalConsoleError;
+});
+
+describe('MealService', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('getMeals', () => {
+    it('should fetch meals with default parameters', async () => {
+      const mockResponse: ApiResponse = {
+        status: true,
+        message: 'Meals fetched successfully',
+        data: [
+          {
+            id: 1,
+            title: 'Pizza',
+            description: 'Delicious pizza',
+            current_price: 15.99,
+            original_price: 20.99,
+            image: 'pizza.jpg',
+            available_from: '2024-01-01T10:00:00Z',
+            available_until: '2024-01-01T22:00:00Z',
+            restaurant: { name: 'Pizza Place' },
+            category: { id: 1, name: 'Italian' },
+          },
+        ],
+        pagination: {
+          current_page: 1,
+          last_page: 1,
+          per_page: 10,
+          total: 1,
+          from: 1,
+          to: 1,
+          has_more_pages: false,
+        },
+        filters_applied: {},
       };
 
-      expect(mockMeal).toHaveProperty('id');
-      expect(mockMeal).toHaveProperty('name');
-      expect(mockMeal).toHaveProperty('description');
-      expect(mockMeal).toHaveProperty('price');
-      expect(mockMeal).toHaveProperty('image');
-      expect(mockMeal).toHaveProperty('category');
-      expect(mockMeal).toHaveProperty('restaurant_id');
-      expect(mockMeal).toHaveProperty('is_available');
-      expect(mockMeal).toHaveProperty('created_at');
-      expect(mockMeal).toHaveProperty('updated_at');
+      (api.get as jest.Mock).mockResolvedValue({ data: mockResponse });
+
+      const result = await mealService.getMeals();
+
+      expect(api.get).toHaveBeenCalledWith('/meals?');
+      expect(result).toEqual(mockResponse);
     });
 
-    it('should validate meal price format', () => {
-      const meals = [
-        { id: 1, name: 'Pizza', price: 15.99 },
-        { id: 2, name: 'Burger', price: 12.50 },
-        { id: 3, name: 'Salad', price: 8.75 },
-      ];
+    it('should fetch meals with filters', async () => {
+      const mockResponse: ApiResponse = {
+        status: true,
+        message: 'Meals fetched successfully',
+        data: [],
+        pagination: {
+          current_page: 1,
+          last_page: 1,
+          per_page: 10,
+          total: 0,
+          from: 0,
+          to: 0,
+          has_more_pages: false,
+        },
+        filters_applied: {},
+      };
 
-      meals.forEach(meal => {
-        expect(typeof meal.price).toBe('number');
-        expect(meal.price).toBeGreaterThan(0);
-        expect(meal.price).toBeLessThan(1000);
-      });
+      (api.get as jest.Mock).mockResolvedValue({ data: mockResponse });
+
+      const filters: MealFilters = {
+        page: 2,
+        per_page: 20,
+        search: 'pizza',
+        category_id: 1,
+        min_price: 10,
+        max_price: 30,
+        sort_by: 'price',
+        sort_order: 'asc',
+        available: true,
+      };
+
+      const result = await mealService.getMeals(filters);
+
+      expect(api.get).toHaveBeenCalledWith(
+        '/meals?page=2&per_page=20&search=pizza&category_id=1&min_price=10&max_price=30&sort_by=price&sort_order=asc&available=true'
+      );
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('should handle invalid response format', async () => {
+      const invalidResponse = {
+        status: true,
+        message: 'Success',
+        data: 'invalid', // Should be an array
+      };
+
+      (api.get as jest.Mock).mockResolvedValue({ data: invalidResponse });
+
+      await expect(mealService.getMeals()).rejects.toThrow('Invalid response format from server');
+    }, 15000);
+
+    it('should retry on network errors', async () => {
+      const mockResponse: ApiResponse = {
+        status: true,
+        message: 'Success',
+        data: [],
+        pagination: {
+          current_page: 1,
+          last_page: 1,
+          per_page: 10,
+          total: 0,
+          from: 0,
+          to: 0,
+          has_more_pages: false,
+        },
+        filters_applied: {},
+      };
+
+      (api.get as jest.Mock)
+        .mockRejectedValueOnce(new Error('Network error'))
+        .mockRejectedValueOnce(new Error('Network error'))
+        .mockResolvedValue({ data: mockResponse });
+
+      const result = await mealService.getMeals();
+
+      expect(api.get).toHaveBeenCalledTimes(3);
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('should not retry on authentication errors', async () => {
+      const authError = {
+        response: { status: 401 },
+        message: 'Unauthorized',
+      };
+
+      (api.get as jest.Mock).mockRejectedValue(authError);
+
+      await expect(mealService.getMeals()).rejects.toEqual(authError);
+      expect(api.get).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not retry on client errors', async () => {
+      const clientError = {
+        response: { status: 404 },
+        message: 'Not found',
+      };
+
+      (api.get as jest.Mock).mockRejectedValue(clientError);
+
+      await expect(mealService.getMeals()).rejects.toEqual(clientError);
+      expect(api.get).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe('Meal filtering', () => {
-    it('should filter meals by category', () => {
-      const meals = [
-        { id: 1, name: 'Margherita Pizza', category: 'Pizza', price: 18.99 },
-        { id: 2, name: 'Pepperoni Pizza', category: 'Pizza', price: 20.99 },
-        { id: 3, name: 'Chicken Burger', category: 'Burger', price: 15.99 },
-        { id: 4, name: 'Caesar Salad', category: 'Salad', price: 12.99 },
-      ];
+  describe('getFilters', () => {
+    it('should fetch filter options', async () => {
+      const mockFilters: FilterOptions = {
+        categories: [
+          { id: 1, name: 'Italian' },
+          { id: 2, name: 'American' },
+        ],
+        price_range: { min: 5, max: 50 },
+        sort_options: [
+          { value: 'price', label: 'Price' },
+          { value: 'name', label: 'Name' },
+        ],
+        sort_orders: [
+          { value: 'asc', label: 'Ascending' },
+          { value: 'desc', label: 'Descending' },
+        ],
+      };
 
-      const pizzaMeals = meals.filter(meal => meal.category === 'Pizza');
-      const burgerMeals = meals.filter(meal => meal.category === 'Burger');
-      const saladMeals = meals.filter(meal => meal.category === 'Salad');
+      (api.get as jest.Mock).mockResolvedValue({ data: { data: mockFilters } });
 
-      expect(pizzaMeals).toHaveLength(2);
-      expect(burgerMeals).toHaveLength(1);
-      expect(saladMeals).toHaveLength(1);
-    });
+      const result = await mealService.getFilters();
 
-    it('should filter meals by price range', () => {
-      const meals = [
-        { id: 1, name: 'Pizza', price: 18.99 },
-        { id: 2, name: 'Burger', price: 15.99 },
-        { id: 3, name: 'Salad', price: 12.99 },
-        { id: 4, name: 'Pasta', price: 22.99 },
-      ];
-
-      const affordableMeals = meals.filter(meal => meal.price <= 20);
-      const expensiveMeals = meals.filter(meal => meal.price > 20);
-
-      expect(affordableMeals).toHaveLength(3);
-      expect(expensiveMeals).toHaveLength(1);
-    });
-
-    it('should filter available meals only', () => {
-      const meals = [
-        { id: 1, name: 'Pizza', is_available: true, price: 18.99 },
-        { id: 2, name: 'Burger', is_available: false, price: 15.99 },
-        { id: 3, name: 'Salad', is_available: true, price: 12.99 },
-        { id: 4, name: 'Pasta', is_available: true, price: 22.99 },
-      ];
-
-      const availableMeals = meals.filter(meal => meal.is_available);
-
-      expect(availableMeals).toHaveLength(3);
-      expect(availableMeals.every(meal => meal.is_available)).toBe(true);
+      expect(api.get).toHaveBeenCalledWith('/meals/filters');
+      expect(result).toEqual(mockFilters);
     });
   });
 
-  describe('Meal search functionality', () => {
-    it('should search meals by name', () => {
-      const meals = [
-        { id: 1, name: 'Margherita Pizza', price: 18.99 },
-        { id: 2, name: 'Pepperoni Pizza', price: 20.99 },
-        { id: 3, name: 'Chicken Burger', price: 15.99 },
-        { id: 4, name: 'Beef Burger', price: 16.99 },
+  describe('getCategories', () => {
+    it('should fetch categories', async () => {
+      const mockCategories = [
+        { id: 1, name: 'Italian' },
+        { id: 2, name: 'American' },
+        { id: 3, name: 'Asian' },
       ];
 
-      const searchTerm = 'pizza';
-      const searchResults = meals.filter(meal => 
-        meal.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      (api.get as jest.Mock).mockResolvedValue({ data: { data: mockCategories } });
 
-      expect(searchResults).toHaveLength(2);
-      expect(searchResults.every(meal => 
-        meal.name.toLowerCase().includes('pizza')
-      )).toBe(true);
-    });
+      const result = await mealService.getCategories();
 
-    it('should handle case-insensitive search', () => {
-      const meals = [
-        { id: 1, name: 'Margherita Pizza', price: 18.99 },
-        { id: 2, name: 'Chicken Burger', price: 15.99 },
-      ];
-
-      const searchResults1 = meals.filter(meal => 
-        meal.name.toLowerCase().includes('pizza')
-      );
-      const searchResults2 = meals.filter(meal => 
-        meal.name.toLowerCase().includes('PIZZA'.toLowerCase())
-      );
-
-      expect(searchResults1).toEqual(searchResults2);
-      expect(searchResults1).toHaveLength(1);
-      expect(searchResults1[0].name).toBe('Margherita Pizza');
+      expect(api.get).toHaveBeenCalledWith('/categories');
+      expect(result).toEqual(mockCategories);
     });
   });
 
-  describe('Meal sorting', () => {
-    it('should sort meals by price (low to high)', () => {
-      const meals = [
-        { id: 1, name: 'Pizza', price: 18.99 },
-        { id: 2, name: 'Burger', price: 15.99 },
-        { id: 3, name: 'Salad', price: 12.99 },
-        { id: 4, name: 'Pasta', price: 22.99 },
+  describe('getMeal', () => {
+    it('should fetch a single meal by ID', async () => {
+      const mockMeal: Meal = {
+        id: 1,
+        title: 'Pizza',
+        description: 'Delicious pizza',
+        current_price: 15.99,
+        original_price: 20.99,
+        image: 'pizza.jpg',
+        available_from: '2024-01-01T10:00:00Z',
+        available_until: '2024-01-01T22:00:00Z',
+        restaurant: { name: 'Pizza Place' },
+        category: { id: 1, name: 'Italian' },
+      };
+
+      (api.get as jest.Mock).mockResolvedValue({ data: { data: mockMeal } });
+
+      const result = await mealService.getMeal(1);
+
+      expect(api.get).toHaveBeenCalledWith('/meals/1');
+      expect(result).toEqual(mockMeal);
+    });
+  });
+
+  describe('toggleFavorite', () => {
+    it('should toggle favorite status for a meal', async () => {
+      const mockResponse = {
+        is_favorited: true,
+        meal_id: 1,
+      };
+
+      (api.post as jest.Mock).mockResolvedValue({ data: { data: mockResponse } });
+
+      const result = await mealService.toggleFavorite(1);
+
+      expect(api.post).toHaveBeenCalledWith('/meals/1/favorite');
+      expect(result).toEqual(mockResponse);
+    });
+  });
+
+  describe('getFavorites', () => {
+    it('should fetch user favorites', async () => {
+      const mockFavorites: Meal[] = [
+        {
+          id: 1,
+          title: 'Pizza',
+          description: 'Delicious pizza',
+          current_price: 15.99,
+          original_price: 20.99,
+          image: 'pizza.jpg',
+          available_from: '2024-01-01T10:00:00Z',
+          available_until: '2024-01-01T22:00:00Z',
+          restaurant: { name: 'Pizza Place' },
+          category: { id: 1, name: 'Italian' },
+        },
       ];
 
-      const sortedMeals = [...meals].sort((a, b) => a.price - b.price);
+      (api.get as jest.Mock).mockResolvedValue({ data: { data: mockFavorites } });
 
-      expect(sortedMeals[0].price).toBe(12.99);
-      expect(sortedMeals[1].price).toBe(15.99);
-      expect(sortedMeals[2].price).toBe(18.99);
-      expect(sortedMeals[3].price).toBe(22.99);
+      const result = await mealService.getFavorites();
+
+      expect(api.get).toHaveBeenCalledWith('/meals/favorites');
+      expect(result).toEqual(mockFavorites);
     });
+  });
 
-    it('should sort meals by name alphabetically', () => {
-      const meals = [
-        { id: 1, name: 'Pizza', price: 18.99 },
-        { id: 2, name: 'Burger', price: 15.99 },
-        { id: 3, name: 'Salad', price: 12.99 },
-        { id: 4, name: 'Pasta', price: 22.99 },
-      ];
+  describe('retryRequest', () => {
+    it('should handle exponential backoff correctly', async () => {
+      const mockResponse: ApiResponse = {
+        status: true,
+        message: 'Success',
+        data: [],
+        pagination: {
+          current_page: 1,
+          last_page: 1,
+          per_page: 10,
+          total: 0,
+          from: 0,
+          to: 0,
+          has_more_pages: false,
+        },
+        filters_applied: {},
+      };
 
-      const sortedMeals = [...meals].sort((a, b) => a.name.localeCompare(b.name));
+      (api.get as jest.Mock)
+        .mockRejectedValueOnce(new Error('Network error'))
+        .mockRejectedValueOnce(new Error('Network error'))
+        .mockResolvedValue({ data: mockResponse });
 
-      expect(sortedMeals[0].name).toBe('Burger');
-      expect(sortedMeals[1].name).toBe('Pasta');
-      expect(sortedMeals[2].name).toBe('Pizza');
-      expect(sortedMeals[3].name).toBe('Salad');
-    });
+      const result = await mealService.getMeals();
+
+      expect(api.get).toHaveBeenCalledTimes(3);
+      expect(result).toEqual(mockResponse);
+    }, 15000);
   });
 });
