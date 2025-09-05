@@ -26,7 +26,6 @@ export default function OrdersScreen() {
 
   const {
     data: ordersData,
-    isLoading: _,
     error,
     refetch,
     isRefetching,

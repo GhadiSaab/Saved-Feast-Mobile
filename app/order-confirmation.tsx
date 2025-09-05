@@ -15,7 +15,7 @@ import { Order, OrderItem, default as orderService } from '@/lib/orders';
 export default function OrderConfirmationScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-  const {} = useAuth();
+  useAuth();
   const params = useLocalSearchParams();
 
   const [order, setOrder] = useState<Order | null>(null);

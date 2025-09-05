@@ -26,7 +26,7 @@ interface MealDetailModalProps {
   onClose: () => void;
 }
 
-const { width: _, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 export const MealDetailModal: React.FC<MealDetailModalProps> = ({
   meal,

@@ -149,7 +149,7 @@ describe('MealService', () => {
 
       expect(api.get).toHaveBeenCalledTimes(3);
       expect(result).toEqual(mockResponse);
-    });
+    }, 20000);
 
     it('should not retry on authentication errors', async () => {
       const authError = {

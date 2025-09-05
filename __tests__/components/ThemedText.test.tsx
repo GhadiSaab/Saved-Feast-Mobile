@@ -2,13 +2,9 @@ import React from 'react';
 import { render } from '@testing-library/react-native';
 import { ThemedText } from '../../components/ThemedText';
 
-// Mock react-native
-jest.mock('react-native', () => ({
-  Text: 'Text',
-  StyleSheet: {
-    create: jest.fn(styles => styles),
-  },
-}));
+// Override the global ThemedText mock for this test
+jest.unmock('@/components/ThemedText');
+jest.unmock('../../components/ThemedText');
 
 describe('ThemedText', () => {
   it('should render text content', () => {

@@ -40,6 +40,19 @@ afterAll(() => {
 describe('AuthService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Reset all mocks to their initial state
+    (SecureStore.getItemAsync as jest.Mock).mockClear();
+    (SecureStore.setItemAsync as jest.Mock).mockClear();
+    (SecureStore.deleteItemAsync as jest.Mock).mockClear();
+    (api.get as jest.Mock).mockClear();
+    (api.post as jest.Mock).mockClear();
+    
+    // Reset mock implementations
+    (SecureStore.getItemAsync as jest.Mock).mockReset();
+    (SecureStore.setItemAsync as jest.Mock).mockReset();
+    (SecureStore.deleteItemAsync as jest.Mock).mockReset();
+    (api.get as jest.Mock).mockReset();
+    (api.post as jest.Mock).mockReset();
   });
 
   describe('login', () => {
@@ -250,9 +263,10 @@ describe('AuthService', () => {
         email: 'test@example.com',
       };
 
+      // Mock SecureStore.getItemAsync to return token and cached user data
       (SecureStore.getItemAsync as jest.Mock)
-        .mockResolvedValueOnce('mock-token') // For auth_token
-        .mockResolvedValueOnce(JSON.stringify(mockUser)); // For user_data
+        .mockResolvedValueOnce('mock-token') // For auth_token check
+        .mockResolvedValueOnce(JSON.stringify(mockUser)); // For user_data when API fails
 
       (api.get as jest.Mock).mockRejectedValue(new Error('Network error'));
 

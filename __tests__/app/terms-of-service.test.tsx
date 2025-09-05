@@ -2,20 +2,14 @@ import React from 'react';
 import { render } from '@testing-library/react-native';
 import TermsOfServiceScreen from '../../app/terms-of-service';
 
+// Override the global ThemedText mock for this test
+jest.unmock('@/components/ThemedText');
+jest.unmock('../../components/ThemedText');
+
 // Mock expo-router
 jest.mock('expo-router', () => ({
   Stack: {
     Screen: 'Screen',
-  },
-}));
-
-// Mock react-native
-jest.mock('react-native', () => ({
-  View: 'View',
-  Text: 'Text',
-  ScrollView: 'ScrollView',
-  StyleSheet: {
-    create: jest.fn(styles => styles),
   },
 }));
 

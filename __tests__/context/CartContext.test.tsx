@@ -1,16 +1,17 @@
 import React from 'react';
 import { render, act } from '@testing-library/react-native';
+import { View, Text } from 'react-native';
 import { CartProvider, useCart } from '../../context/CartContext';
 
 // Test component to access cart context
 const TestComponent = () => {
   const cart = useCart();
   return (
-    <div>
-      <div data-testid="itemCount">{cart.itemCount}</div>
-      <div data-testid="total">{cart.total}</div>
-      <div data-testid="items">{JSON.stringify(cart.items)}</div>
-    </div>
+    <View>
+      <Text testID="itemCount">{cart.itemCount}</Text>
+      <Text testID="total">{cart.total}</Text>
+      <Text testID="items">{JSON.stringify(cart.items)}</Text>
+    </View>
   );
 };
 
@@ -47,7 +48,13 @@ describe('CartContext', () => {
 
     const TestComponentWithMethods = () => {
       cartContext = useCart();
-      return null;
+      return (
+        <View>
+          <Text testID="itemCount">{cartContext.itemCount}</Text>
+          <Text testID="total">{cartContext.total}</Text>
+          <Text testID="items">{JSON.stringify(cartContext.items)}</Text>
+        </View>
+      );
     };
 
     beforeEach(() => {
@@ -82,7 +89,7 @@ describe('CartContext', () => {
         quantity: 1,
       });
       expect(cartContext.itemCount).toBe(1);
-      expect(cartContext.total).toBe(15.99);
+      expect(cartContext.total).toBeCloseTo(15.99, 2);
     });
 
     it('should increase quantity when adding existing item', () => {
@@ -107,7 +114,7 @@ describe('CartContext', () => {
       expect(cartContext.items).toHaveLength(1);
       expect(cartContext.items[0].quantity).toBe(2);
       expect(cartContext.itemCount).toBe(2);
-      expect(cartContext.total).toBe(31.98);
+      expect(cartContext.total).toBeCloseTo(31.98, 2);
     });
 
     it('should remove item from cart', () => {
@@ -155,7 +162,7 @@ describe('CartContext', () => {
 
       expect(cartContext.items[0].quantity).toBe(3);
       expect(cartContext.itemCount).toBe(3);
-      expect(cartContext.total).toBe(47.97);
+      expect(cartContext.total).toBeCloseTo(47.97, 2);
     });
 
     it('should remove item when quantity is set to 0', () => {
@@ -257,7 +264,7 @@ describe('CartContext', () => {
       expect(cartContext.items[0].quantity).toBe(2); // Pizza quantity
       expect(cartContext.items[1].quantity).toBe(1); // Burger quantity
       expect(cartContext.itemCount).toBe(3);
-      expect(cartContext.total).toBe(44.48); // 15.99 * 2 + 12.50 * 1
+      expect(cartContext.total).toBeCloseTo(44.48, 2); // 15.99 * 2 + 12.50 * 1
     });
 
     it('should handle non-existent item operations gracefully', () => {

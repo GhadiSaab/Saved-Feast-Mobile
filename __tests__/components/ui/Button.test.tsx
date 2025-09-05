@@ -71,21 +71,28 @@ describe('Button', () => {
 
   it('should be disabled when loading', () => {
     const mockOnPress = jest.fn();
-    const { getByText } = render(
+    const { getByTestId } = render(
       <Button title="Loading" loading={true} onPress={mockOnPress} />
     );
 
-    fireEvent.press(getByText('Loading'));
+    // When loading, the button should show ActivityIndicator and be disabled
+    expect(getByTestId('button-loading')).toBeTruthy();
+    
+    // Try to press the button container (TouchableOpacity)
+    const button = getByTestId('button-loading');
+    fireEvent.press(button);
     expect(mockOnPress).not.toHaveBeenCalled();
   });
 
   it('should be disabled when disabled prop is true', () => {
     const mockOnPress = jest.fn();
-    const { getByText } = render(
+    const { getByTestId } = render(
       <Button title="Disabled" disabled={true} onPress={mockOnPress} />
     );
 
-    fireEvent.press(getByText('Disabled'));
+    // Press the button container
+    const button = getByTestId('button');
+    fireEvent.press(button);
     expect(mockOnPress).not.toHaveBeenCalled();
   });
 });

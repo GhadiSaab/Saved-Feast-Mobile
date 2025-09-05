@@ -4,8 +4,9 @@ import TabBarBackground, {
 } from '../../../components/ui/TabBarBackground';
 
 describe('TabBarBackground', () => {
-  it('should export undefined for TabBarBackground', () => {
-    expect(TabBarBackground).toBeUndefined();
+  it('should export TabBarBackground component', () => {
+    // TabBarBackground can be undefined (web/Android) or a function (iOS)
+    expect(typeof TabBarBackground === 'undefined' || typeof TabBarBackground === 'function').toBe(true);
   });
 
   it('should export useBottomTabOverflow hook', () => {

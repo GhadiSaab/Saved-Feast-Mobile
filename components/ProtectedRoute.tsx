@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Button } from './ui/Button';
 import { LoadingSpinner } from './LoadingSpinner';
 import { Colors } from '@/constants/Colors';
@@ -29,20 +29,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   console.log('ProtectedRoute - isLoading:', isLoading);
   console.log('ProtectedRoute - requireAuth:', requireAuth);
 
-  const _ = () => {
-    if (onAuthRequired) {
-      onAuthRequired();
-    } else {
-      Alert.alert(
-        'Authentication Required',
-        'Please log in to access this feature.',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Login', onPress: () => router.push('/(auth)/login') },
-        ]
-      );
-    }
-  };
 
   if (isLoading) {
     return <LoadingSpinner message="Loading..." fullScreen />;

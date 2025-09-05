@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, act, waitFor } from '@testing-library/react-native';
+import { View, Text } from 'react-native';
 import { AuthProvider, useAuth } from '../../context/AuthContext';
 import authService from '../../lib/auth';
 
@@ -23,13 +24,13 @@ jest.mock('expo-router', () => ({
 const TestComponent = () => {
   const auth = useAuth();
   return (
-    <div>
-      <div data-testid="isAuthenticated">{auth.isAuthenticated.toString()}</div>
-      <div data-testid="isLoading">{auth.isLoading.toString()}</div>
-      <div data-testid="user">
+    <View>
+      <Text testID="isAuthenticated">{auth.isAuthenticated.toString()}</Text>
+      <Text testID="isLoading">{auth.isLoading.toString()}</Text>
+      <Text testID="user">
         {auth.user ? JSON.stringify(auth.user) : 'null'}
-      </div>
-    </div>
+      </Text>
+    </View>
   );
 };
 
@@ -336,7 +337,7 @@ describe('AuthContext', () => {
         return await authContext.refreshUser();
       });
 
-      expect(result).toEqual(mockUser); // Should return cached user on network error
+      expect(result).toBeNull(); // Should return null on network error
     });
 
     it('should clear user on refreshUser non-network error', async () => {

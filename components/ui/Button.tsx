@@ -70,16 +70,22 @@ export const Button: React.FC<ButtonProps> = ({
     textStyle,
   ];
 
+  const handlePress = () => {
+    if (!disabled && !loading) {
+      onPress();
+    }
+  };
+
   return (
     <TouchableOpacity
       style={buttonStyles}
-      onPress={onPress}
+      onPress={handlePress}
       disabled={disabled || loading}
       activeOpacity={0.8}
+      testID={loading ? 'button-loading' : 'button'}
     >
       {loading ? (
         <ActivityIndicator
-          testID="button-loading"
           color={
             variant === 'primary' || variant === 'secondary'
               ? '#FFFFFF'

@@ -57,13 +57,15 @@ export const MealCard: React.FC<MealCardProps> = ({
 
   const formatPickupTime = () => {
     if (meal.available_from && meal.available_until) {
-      const fromTime = new Date(meal.available_from).toLocaleTimeString([], {
-        hour: '2-digit',
+      const fromTime = new Date(meal.available_from).toLocaleTimeString('en-US', {
+        hour: 'numeric',
         minute: '2-digit',
+        hour12: true,
       });
-      const untilTime = new Date(meal.available_until).toLocaleTimeString([], {
-        hour: '2-digit',
+      const untilTime = new Date(meal.available_until).toLocaleTimeString('en-US', {
+        hour: 'numeric',
         minute: '2-digit',
+        hour12: true,
       });
       return `${fromTime} - ${untilTime}`;
     }
@@ -110,7 +112,7 @@ export const MealCard: React.FC<MealCardProps> = ({
         'Please log in to add items to your cart.',
         [
           { text: 'Cancel', style: 'cancel' },
-          { text: 'Login', onPress: () => router.push('/login') },
+          { text: 'Login', onPress: () => router.push('/(auth)/login') },
         ]
       );
     }
@@ -123,7 +125,7 @@ export const MealCard: React.FC<MealCardProps> = ({
         'Please log in to favorite meals.',
         [
           { text: 'Cancel', style: 'cancel' },
-          { text: 'Login', onPress: () => router.push('/login') },
+          { text: 'Login', onPress: () => router.push('/(auth)/login') },
         ]
       );
       return;
@@ -143,8 +145,16 @@ export const MealCard: React.FC<MealCardProps> = ({
 
   const savingsPercentage = calculateSavings();
 
+  const handleCardPress = () => {
+    if (onPress) {
+      onPress();
+    } else {
+      router.push(`/meal/${meal.id}`);
+    }
+  };
+
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.9}>
+    <TouchableOpacity onPress={handleCardPress} activeOpacity={0.9} testID="meal-card">
       <Card
         style={[styles.container, { width: cardWidth }] as any}
         elevation={3}
@@ -171,11 +181,13 @@ export const MealCard: React.FC<MealCardProps> = ({
             style={styles.favoriteButton}
             onPress={handleFavoriteToggle}
             disabled={favoriteLoading}
+            testID={favoriteLoading ? "favorite-loading" : "favorite-button"}
           >
             <Ionicons
               name={favorited ? 'heart' : 'heart-outline'}
               size={24}
               color={favorited ? '#FF6B6B' : '#FFFFFF'}
+              testID="favorite-icon"
             />
           </TouchableOpacity>
 
@@ -189,7 +201,7 @@ export const MealCard: React.FC<MealCardProps> = ({
           {/* Restaurant Badge */}
           {meal.restaurant && (
             <View style={styles.restaurantBadge}>
-              <Text style={styles.restaurantText}>{meal.restaurant.name}</Text>
+              <Text style={styles.restaurantText} testID="restaurant-badge">{meal.restaurant.name}</Text>
             </View>
           )}
         </View>
@@ -208,8 +220,17 @@ export const MealCard: React.FC<MealCardProps> = ({
               <Text
                 style={[styles.restaurantName, { color: colors.text }]}
                 numberOfLines={1}
+                testID="restaurant-name"
               >
                 {meal.restaurant.name}
+              </Text>
+            )}
+            {meal.category && (
+              <Text
+                style={[styles.categoryName, { color: colors.text }]}
+                numberOfLines={1}
+              >
+                {meal.category.name}
               </Text>
             )}
           </View>
@@ -255,7 +276,7 @@ export const MealCard: React.FC<MealCardProps> = ({
             <View style={styles.buttonContainer}>
               <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
                 <Button
-                  title={showSuccess ? 'Added!' : 'Add'}
+                  title={showSuccess ? 'Added!' : 'Add to Cart'}
                   onPress={handleAddToCart}
                   variant="primary"
                   size="small"
@@ -357,6 +378,11 @@ const styles = StyleSheet.create({
   restaurantName: {
     fontSize: 12,
     opacity: 0.7,
+  },
+  categoryName: {
+    fontSize: 12,
+    opacity: 0.7,
+    marginTop: 2,
   },
   description: {
     fontSize: 14,

@@ -10,7 +10,9 @@ export interface CartItem {
 }
 
 interface CartContextType {
-  cartItems: CartItem[];
+  items: CartItem[];
+  itemCount: number;
+  total: number;
   addToCart: (meal: {
     id: number;
     name: string;
@@ -93,7 +95,9 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   const contextValue: CartContextType = {
-    cartItems,
+    items: cartItems,
+    itemCount: getItemCount(),
+    total: getCartTotal(),
     addToCart,
     removeFromCart,
     updateQuantity,
