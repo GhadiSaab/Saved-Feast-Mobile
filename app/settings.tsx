@@ -12,7 +12,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useAuth } from '@/context/AuthContext';
@@ -21,9 +20,9 @@ export default function SettingsScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { user } = useAuth();
-  
+
   // Settings state
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [,] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
   const [marketingEmails, setMarketingEmails] = useState(false);
@@ -66,9 +65,15 @@ export default function SettingsScreen() {
       'Your data will be exported and sent to your email address.',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Export', onPress: () => {
-          Alert.alert('Export Started', 'Your data export has been initiated.');
-        }}
+        {
+          text: 'Export',
+          onPress: () => {
+            Alert.alert(
+              'Export Started',
+              'Your data export has been initiated.'
+            );
+          },
+        },
       ]
     );
   };
@@ -79,9 +84,12 @@ export default function SettingsScreen() {
       'This will clear all cached data and free up storage space.',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Clear', onPress: () => {
-          Alert.alert('Cache Cleared', 'All cached data has been cleared.');
-        }}
+        {
+          text: 'Clear',
+          onPress: () => {
+            Alert.alert('Cache Cleared', 'All cached data has been cleared.');
+          },
+        },
       ]
     );
   };
@@ -177,14 +185,18 @@ export default function SettingsScreen() {
   ];
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity style={styles.backButton} onPress={handleBack}>
             <Ionicons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>Settings</Text>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>
+            Settings
+          </Text>
           <View style={styles.headerSpacer} />
         </View>
 
@@ -193,7 +205,8 @@ export default function SettingsScreen() {
           <View style={styles.userInfo}>
             <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
               <Text style={styles.avatarText}>
-                {user?.first_name?.charAt(0)?.toUpperCase()}{user?.last_name?.charAt(0)?.toUpperCase()}
+                {user?.first_name?.charAt(0)?.toUpperCase()}
+                {user?.last_name?.charAt(0)?.toUpperCase()}
               </Text>
             </View>
             <View style={styles.userDetails}>
@@ -228,32 +241,43 @@ export default function SettingsScreen() {
                   <Text style={[styles.settingTitle, { color: colors.text }]}>
                     {item.title}
                   </Text>
-                  <Text style={[styles.settingSubtitle, { color: colors.text + '80' }]}>
+                  <Text
+                    style={[
+                      styles.settingSubtitle,
+                      { color: colors.text + '80' },
+                    ]}
+                  >
                     {item.subtitle}
                   </Text>
                 </View>
                 {item.type === 'switch' ? (
                   <Switch
-                    value={item.value}
-                    onValueChange={item.onValueChange}
+                    value={(item as any).value || false}
+                    onValueChange={(item as any).onValueChange || (() => {})}
                     trackColor={{ false: colors.border, true: colors.primary }}
-                    thumbColor={item.value ? '#FFFFFF' : '#FFFFFF'}
+                    thumbColor={(item as any).value ? '#FFFFFF' : '#FFFFFF'}
                   />
                 ) : (
                   <TouchableOpacity
-                    onPress={item.onPress}
+                    onPress={item.onPress || (() => {})}
                     style={[
                       styles.settingButton,
-                      item.destructive && { backgroundColor: '#FF3B30' },
+                      (item as any).destructive && {
+                        backgroundColor: '#FF3B30',
+                      },
                     ]}
                   >
                     <Text
                       style={[
                         styles.settingButtonText,
-                        { color: item.destructive ? '#FFFFFF' : colors.primary },
+                        {
+                          color: (item as any).destructive
+                            ? '#FFFFFF'
+                            : colors.primary,
+                        },
                       ]}
                     >
-                      {item.destructive ? 'Delete' : 'Change'}
+                      {(item as any).destructive ? 'Delete' : 'Change'}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -264,34 +288,56 @@ export default function SettingsScreen() {
 
         {/* App Info */}
         <Card style={styles.appInfoCard} elevation={3}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>App Information</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            App Information
+          </Text>
           <View style={styles.appInfoRow}>
-            <Text style={[styles.appInfoLabel, { color: colors.text }]}>Version</Text>
-            <Text style={[styles.appInfoValue, { color: colors.text }]}>1.0.0</Text>
+            <Text style={[styles.appInfoLabel, { color: colors.text }]}>
+              Version
+            </Text>
+            <Text style={[styles.appInfoValue, { color: colors.text }]}>
+              1.0.0
+            </Text>
           </View>
           <View style={styles.appInfoRow}>
-            <Text style={[styles.appInfoLabel, { color: colors.text }]}>Build</Text>
-            <Text style={[styles.appInfoValue, { color: colors.text }]}>2024.1</Text>
+            <Text style={[styles.appInfoLabel, { color: colors.text }]}>
+              Build
+            </Text>
+            <Text style={[styles.appInfoValue, { color: colors.text }]}>
+              2024.1
+            </Text>
           </View>
           <View style={styles.appInfoRow}>
-            <Text style={[styles.appInfoLabel, { color: colors.text }]}>Platform</Text>
-            <Text style={[styles.appInfoValue, { color: colors.text }]}>iOS</Text>
+            <Text style={[styles.appInfoLabel, { color: colors.text }]}>
+              Platform
+            </Text>
+            <Text style={[styles.appInfoValue, { color: colors.text }]}>
+              iOS
+            </Text>
           </View>
         </Card>
 
         {/* Legal Links */}
         <Card style={styles.legalCard} elevation={3}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Legal</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            Legal
+          </Text>
           <TouchableOpacity style={styles.legalItem}>
-            <Text style={[styles.legalText, { color: colors.primary }]}>Terms of Service</Text>
+            <Text style={[styles.legalText, { color: colors.primary }]}>
+              Terms of Service
+            </Text>
             <Ionicons name="chevron-forward" size={16} color={colors.text} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.legalItem}>
-            <Text style={[styles.legalText, { color: colors.primary }]}>Privacy Policy</Text>
+            <Text style={[styles.legalText, { color: colors.primary }]}>
+              Privacy Policy
+            </Text>
             <Ionicons name="chevron-forward" size={16} color={colors.text} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.legalItem}>
-            <Text style={[styles.legalText, { color: colors.primary }]}>Cookie Policy</Text>
+            <Text style={[styles.legalText, { color: colors.primary }]}>
+              Cookie Policy
+            </Text>
             <Ionicons name="chevron-forward" size={16} color={colors.text} />
           </TouchableOpacity>
         </Card>

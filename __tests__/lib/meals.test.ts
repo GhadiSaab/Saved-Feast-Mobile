@@ -1,4 +1,9 @@
-import mealService, { Meal, FilterOptions, MealFilters, ApiResponse } from '../../lib/meals';
+import mealService, {
+  Meal,
+  FilterOptions,
+  MealFilters,
+  ApiResponse,
+} from '../../lib/meals';
 import api from '../../lib/api';
 
 // Mock the api module
@@ -113,7 +118,9 @@ describe('MealService', () => {
 
       (api.get as jest.Mock).mockResolvedValue({ data: invalidResponse });
 
-      await expect(mealService.getMeals()).rejects.toThrow('Invalid response format from server');
+      await expect(mealService.getMeals()).rejects.toThrow(
+        'Invalid response format from server'
+      );
     }, 15000);
 
     it('should retry on network errors', async () => {
@@ -204,7 +211,9 @@ describe('MealService', () => {
         { id: 3, name: 'Asian' },
       ];
 
-      (api.get as jest.Mock).mockResolvedValue({ data: { data: mockCategories } });
+      (api.get as jest.Mock).mockResolvedValue({
+        data: { data: mockCategories },
+      });
 
       const result = await mealService.getCategories();
 
@@ -244,7 +253,9 @@ describe('MealService', () => {
         meal_id: 1,
       };
 
-      (api.post as jest.Mock).mockResolvedValue({ data: { data: mockResponse } });
+      (api.post as jest.Mock).mockResolvedValue({
+        data: { data: mockResponse },
+      });
 
       const result = await mealService.toggleFavorite(1);
 
@@ -270,7 +281,9 @@ describe('MealService', () => {
         },
       ];
 
-      (api.get as jest.Mock).mockResolvedValue({ data: { data: mockFavorites } });
+      (api.get as jest.Mock).mockResolvedValue({
+        data: { data: mockFavorites },
+      });
 
       const result = await mealService.getFavorites();
 

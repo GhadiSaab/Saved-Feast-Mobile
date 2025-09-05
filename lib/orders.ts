@@ -20,7 +20,13 @@ export interface Order {
   id: number;
   user_id: number;
   total_amount: number;
-  status: 'pending' | 'confirmed' | 'preparing' | 'ready' | 'completed' | 'cancelled';
+  status:
+    | 'pending'
+    | 'confirmed'
+    | 'preparing'
+    | 'ready'
+    | 'completed'
+    | 'cancelled';
   pickup_time: string;
   notes?: string;
   created_at: string;
@@ -45,7 +51,9 @@ export interface ApiResponse {
 }
 
 class OrderService {
-  async getOrders(page: number = 1): Promise<{ data: Order[]; pagination: any }> {
+  async getOrders(
+    page: number = 1
+  ): Promise<{ data: Order[]; pagination: any }> {
     try {
       const response = await api.get(`/orders?page=${page}`);
       return {
@@ -53,7 +61,9 @@ class OrderService {
         pagination: response.data.pagination,
       };
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to fetch orders');
+      throw new Error(
+        error.response?.data?.message || 'Failed to fetch orders'
+      );
     }
   }
 
@@ -76,14 +86,20 @@ class OrderService {
         // Validation errors
         const validationErrors = error.response.data?.errors;
         if (validationErrors) {
-          const errorMessages = Object.values(validationErrors).flat().join(', ');
+          const errorMessages = Object.values(validationErrors)
+            .flat()
+            .join(', ');
           throw new Error(errorMessages);
         }
       } else if (error.response?.status === 400) {
         // Business logic errors (e.g., insufficient quantity)
-        throw new Error(error.response.data?.message || 'Order creation failed');
+        throw new Error(
+          error.response.data?.message || 'Order creation failed'
+        );
       }
-      throw new Error(error.response?.data?.message || 'Failed to create order');
+      throw new Error(
+        error.response?.data?.message || 'Failed to create order'
+      );
     }
   }
 
@@ -91,7 +107,9 @@ class OrderService {
     try {
       await api.post(`/orders/${id}/cancel`);
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to cancel order');
+      throw new Error(
+        error.response?.data?.message || 'Failed to cancel order'
+      );
     }
   }
 
@@ -99,7 +117,9 @@ class OrderService {
     try {
       await api.post(`/orders/${id}/complete`);
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to complete order');
+      throw new Error(
+        error.response?.data?.message || 'Failed to complete order'
+      );
     }
   }
 }

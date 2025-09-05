@@ -1,4 +1,9 @@
-import authService, { User, LoginCredentials, RegisterData, AuthResponse } from '../../lib/auth';
+import authService, {
+  User,
+  LoginCredentials,
+  RegisterData,
+  AuthResponse,
+} from '../../lib/auth';
 import api from '../../lib/api';
 import * as SecureStore from 'expo-secure-store';
 
@@ -66,8 +71,14 @@ describe('AuthService', () => {
       const result = await authService.login(credentials);
 
       expect(api.post).toHaveBeenCalledWith('/login', credentials);
-      expect(SecureStore.setItemAsync).toHaveBeenCalledWith('auth_token', mockResponse.token);
-      expect(SecureStore.setItemAsync).toHaveBeenCalledWith('user_data', JSON.stringify(mockResponse.user));
+      expect(SecureStore.setItemAsync).toHaveBeenCalledWith(
+        'auth_token',
+        mockResponse.token
+      );
+      expect(SecureStore.setItemAsync).toHaveBeenCalledWith(
+        'user_data',
+        JSON.stringify(mockResponse.user)
+      );
       expect(result).toEqual(mockResponse);
     });
 
@@ -154,15 +165,23 @@ describe('AuthService', () => {
       const result = await authService.register(userData);
 
       expect(api.post).toHaveBeenCalledWith('/register', userData);
-      expect(SecureStore.setItemAsync).toHaveBeenCalledWith('auth_token', mockResponse.token);
-      expect(SecureStore.setItemAsync).toHaveBeenCalledWith('user_data', JSON.stringify(mockResponse.user));
+      expect(SecureStore.setItemAsync).toHaveBeenCalledWith(
+        'auth_token',
+        mockResponse.token
+      );
+      expect(SecureStore.setItemAsync).toHaveBeenCalledWith(
+        'user_data',
+        JSON.stringify(mockResponse.user)
+      );
       expect(result).toEqual(mockResponse);
     });
   });
 
   describe('logout', () => {
     it('should logout successfully and clear storage', async () => {
-      (api.post as jest.Mock).mockResolvedValue({ data: { message: 'Logged out' } });
+      (api.post as jest.Mock).mockResolvedValue({
+        data: { message: 'Logged out' },
+      });
 
       await authService.logout();
 
@@ -216,7 +235,10 @@ describe('AuthService', () => {
       const result = await authService.getCurrentUser();
 
       expect(api.get).toHaveBeenCalledWith('/user');
-      expect(SecureStore.setItemAsync).toHaveBeenCalledWith('user_data', JSON.stringify(mockUser));
+      expect(SecureStore.setItemAsync).toHaveBeenCalledWith(
+        'user_data',
+        JSON.stringify(mockUser)
+      );
       expect(result).toEqual(mockUser);
     });
 
@@ -232,7 +254,7 @@ describe('AuthService', () => {
         .mockResolvedValueOnce('mock-token') // For auth_token
         .mockResolvedValueOnce(JSON.stringify(mockUser)); // For user_data
 
-      (api.get as jest.Mock).mockRejectedValue(new Error('Network error occurred'));
+      (api.get as jest.Mock).mockRejectedValue(new Error('Network error'));
 
       const result = await authService.getCurrentUser();
 
@@ -275,7 +297,7 @@ describe('AuthService', () => {
         .mockResolvedValueOnce('mock-token') // For auth_token
         .mockResolvedValueOnce(JSON.stringify(mockUser)); // For user_data
 
-      (api.get as jest.Mock).mockRejectedValue(new Error('API timeout'));
+      (api.get as jest.Mock).mockRejectedValue(new Error('timeout'));
 
       const result = await authService.getCurrentUser();
 
@@ -302,7 +324,9 @@ describe('AuthService', () => {
     });
 
     it('should return false on error', async () => {
-      (SecureStore.getItemAsync as jest.Mock).mockRejectedValue(new Error('Storage error'));
+      (SecureStore.getItemAsync as jest.Mock).mockRejectedValue(
+        new Error('Storage error')
+      );
 
       const result = await authService.isAuthenticated();
 
@@ -335,7 +359,10 @@ describe('AuthService', () => {
         name: 'Jane Smith',
         email: 'jane@example.com',
       });
-      expect(SecureStore.setItemAsync).toHaveBeenCalledWith('user_data', JSON.stringify(updatedUser));
+      expect(SecureStore.setItemAsync).toHaveBeenCalledWith(
+        'user_data',
+        JSON.stringify(updatedUser)
+      );
       expect(result).toEqual(updatedUser);
     });
   });
@@ -348,17 +375,24 @@ describe('AuthService', () => {
         password_confirmation: 'newpassword',
       };
 
-      (api.post as jest.Mock).mockResolvedValue({ data: { message: 'Password changed' } });
+      (api.post as jest.Mock).mockResolvedValue({
+        data: { message: 'Password changed' },
+      });
 
       await authService.changePassword(passwordData);
 
-      expect(api.post).toHaveBeenCalledWith('/user/change-password', passwordData);
+      expect(api.post).toHaveBeenCalledWith(
+        '/user/change-password',
+        passwordData
+      );
     });
   });
 
   describe('testConnection', () => {
     it('should return true on successful connection', async () => {
-      (api.get as jest.Mock).mockResolvedValue({ data: { message: 'API is working' } });
+      (api.get as jest.Mock).mockResolvedValue({
+        data: { message: 'API is working' },
+      });
 
       const result = await authService.testConnection();
 

@@ -26,7 +26,7 @@ interface MealDetailModalProps {
   onClose: () => void;
 }
 
-const { width, height } = Dimensions.get('window');
+const { width: _, height } = Dimensions.get('window');
 
 export const MealDetailModal: React.FC<MealDetailModalProps> = ({
   meal,
@@ -37,7 +37,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
   const colors = Colors[colorScheme ?? 'light'];
   const { isAuthenticated } = useAuth();
   const { addToCart } = useCart();
-  
+
   const [buttonScale] = useState(new Animated.Value(1));
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -45,7 +45,9 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
 
   const calculateSavings = () => {
     if (meal.original_price && meal.original_price > meal.current_price) {
-      const savings = ((meal.original_price - meal.current_price) / meal.original_price) * 100;
+      const savings =
+        ((meal.original_price - meal.current_price) / meal.original_price) *
+        100;
       return Math.round(savings);
     }
     return 0;
@@ -53,13 +55,13 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
 
   const formatPickupTime = () => {
     if (meal.available_from && meal.available_until) {
-      const fromTime = new Date(meal.available_from).toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit' 
+      const fromTime = new Date(meal.available_from).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
       });
-      const untilTime = new Date(meal.available_until).toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit' 
+      const untilTime = new Date(meal.available_until).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
       });
       return `${fromTime} - ${untilTime}`;
     }
@@ -90,7 +92,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
 
   const handleAddToCart = () => {
     animateButton();
-    
+
     if (isAuthenticated) {
       addToCart({
         id: meal.id,
@@ -133,7 +135,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
           </TouchableOpacity>
         </View>
 
-        <ScrollView 
+        <ScrollView
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
@@ -148,11 +150,16 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                 placeholder="🍽️"
               />
             ) : (
-              <View style={[styles.placeholder, { backgroundColor: colors.primary }]}>
+              <View
+                style={[
+                  styles.placeholder,
+                  { backgroundColor: colors.primary },
+                ]}
+              >
                 <Ionicons name="restaurant" size={64} color="#FFFFFF" />
               </View>
             )}
-            
+
             {/* Savings Badge */}
             {savingsPercentage > 0 && (
               <View style={styles.savingsBadge}>
@@ -163,7 +170,9 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
             {/* Restaurant Badge */}
             {meal.restaurant && (
               <View style={styles.restaurantBadge}>
-                <Text style={styles.restaurantText}>{meal.restaurant.name}</Text>
+                <Text style={styles.restaurantText}>
+                  {meal.restaurant.name}
+                </Text>
               </View>
             )}
           </View>
@@ -178,7 +187,11 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
             {/* Restaurant */}
             {meal.restaurant && (
               <View style={styles.restaurantRow}>
-                <Ionicons name="business-outline" size={20} color={colors.primary} />
+                <Ionicons
+                  name="business-outline"
+                  size={20}
+                  color={colors.primary}
+                />
                 <Text style={[styles.restaurantName, { color: colors.text }]}>
                   {meal.restaurant.name}
                 </Text>
@@ -187,17 +200,23 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
 
             {/* Price Section */}
             <View style={styles.priceSection}>
-              {meal.original_price && meal.original_price > meal.current_price ? (
+              {meal.original_price &&
+              meal.original_price > meal.current_price ? (
                 <View style={styles.priceRow}>
-                  <Text style={[styles.currentPrice, { color: colors.primary }]}>
+                  <Text
+                    style={[styles.currentPrice, { color: colors.primary }]}
+                  >
                     €{meal.current_price.toFixed(2)}
                   </Text>
                   <Text style={[styles.originalPrice, { color: colors.text }]}>
                     €{meal.original_price.toFixed(2)}
                   </Text>
                   <View style={styles.savingsContainer}>
-                    <Text style={[styles.savingsAmount, { color: colors.primary }]}>
-                      Save €{(meal.original_price - meal.current_price).toFixed(2)}
+                    <Text
+                      style={[styles.savingsAmount, { color: colors.primary }]}
+                    >
+                      Save €
+                      {(meal.original_price - meal.current_price).toFixed(2)}
                     </Text>
                   </View>
                 </View>
@@ -212,7 +231,9 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
             <View style={styles.pickupTime}>
               <Ionicons name="time-outline" size={20} color={colors.primary} />
               <View style={styles.pickupContent}>
-                <Text style={[styles.pickupLabel, { color: colors.text }]}>Pickup Time</Text>
+                <Text style={[styles.pickupLabel, { color: colors.text }]}>
+                  Pickup Time
+                </Text>
                 <Text style={[styles.pickupText, { color: colors.text }]}>
                   {formatPickupTime()}
                 </Text>
@@ -221,7 +242,9 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
 
             {/* Description */}
             <View style={styles.descriptionSection}>
-              <Text style={[styles.descriptionTitle, { color: colors.text }]}>Description</Text>
+              <Text style={[styles.descriptionTitle, { color: colors.text }]}>
+                Description
+              </Text>
               <Text style={[styles.description, { color: colors.text }]}>
                 {meal.description || 'No description available.'}
               </Text>
@@ -230,7 +253,9 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
             {/* Additional Info */}
             {meal.category && (
               <View style={styles.infoSection}>
-                <Text style={[styles.infoTitle, { color: colors.text }]}>Category</Text>
+                <Text style={[styles.infoTitle, { color: colors.text }]}>
+                  Category
+                </Text>
                 <Text style={[styles.infoText, { color: colors.text }]}>
                   {meal.category.name}
                 </Text>
@@ -239,9 +264,12 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
 
             {/* Allergens or Dietary Info */}
             <View style={styles.infoSection}>
-              <Text style={[styles.infoTitle, { color: colors.text }]}>Important Notes</Text>
+              <Text style={[styles.infoTitle, { color: colors.text }]}>
+                Important Notes
+              </Text>
               <Text style={[styles.infoText, { color: colors.text }]}>
-                Please check with the restaurant for any specific dietary requirements or allergens.
+                Please check with the restaurant for any specific dietary
+                requirements or allergens.
               </Text>
             </View>
           </View>
@@ -251,11 +279,14 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
         <View style={[styles.bottomBar, { backgroundColor: colors.card }]}>
           <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
             <Button
-              title={showSuccess ? "Added to Cart!" : "Add to Cart"}
+              title={showSuccess ? 'Added to Cart!' : 'Add to Cart'}
               onPress={handleAddToCart}
               variant="primary"
               size="large"
-              style={{ ...styles.addToCartButton, backgroundColor: showSuccess ? '#27AE60' : colors.primary }}
+              style={{
+                ...styles.addToCartButton,
+                backgroundColor: showSuccess ? '#27AE60' : colors.primary,
+              }}
             />
           </Animated.View>
         </View>

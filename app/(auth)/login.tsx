@@ -38,7 +38,10 @@ export default function LoginScreen() {
       await login({ email: email.trim(), password });
       // Navigation will be handled by AuthGuard
     } catch (error: any) {
-      Alert.alert('Login Failed', error.message || 'Please check your credentials');
+      Alert.alert(
+        'Login Failed',
+        error.message || 'Please check your credentials'
+      );
     }
   };
 
@@ -47,7 +50,9 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -68,10 +73,17 @@ export default function LoginScreen() {
 
           {/* Logo and Title */}
           <View style={styles.logoSection}>
-            <View style={[styles.logoContainer, { backgroundColor: colors.primary }]}>
+            <View
+              style={[
+                styles.logoContainer,
+                { backgroundColor: colors.primary },
+              ]}
+            >
               <Ionicons name="leaf" size={48} color="#FFFFFF" />
             </View>
-            <Text style={[styles.title, { color: colors.text }]}>Welcome Back</Text>
+            <Text style={[styles.title, { color: colors.text }]}>
+              Welcome Back
+            </Text>
             <Text style={[styles.subtitle, { color: colors.text }]}>
               Sign in to continue saving food and money
             </Text>
@@ -80,7 +92,12 @@ export default function LoginScreen() {
           {/* Login Form */}
           <Card style={styles.formCard} elevation={3}>
             <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color={colors.text} style={styles.inputIcon} />
+              <Ionicons
+                name="mail-outline"
+                size={20}
+                color={colors.text}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={[styles.input, { color: colors.text }]}
                 placeholder="Email address"
@@ -94,7 +111,12 @@ export default function LoginScreen() {
             </View>
 
             <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color={colors.text} style={styles.inputIcon} />
+              <Ionicons
+                name="lock-closed-outline"
+                size={20}
+                color={colors.text}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={[styles.input, { color: colors.text }]}
                 placeholder="Password"
@@ -142,7 +164,8 @@ export default function LoginScreen() {
           {/* Footer */}
           <View style={styles.footer}>
             <Text style={[styles.footerText, { color: colors.text }]}>
-              By signing in, you agree to our Terms of Service and Privacy Policy
+              By signing in, you agree to our Terms of Service and Privacy
+              Policy
             </Text>
           </View>
         </ScrollView>

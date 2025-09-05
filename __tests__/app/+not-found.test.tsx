@@ -15,20 +15,20 @@ jest.mock('react-native', () => ({
   View: 'View',
   Text: 'Text',
   StyleSheet: {
-    create: jest.fn((styles) => styles),
+    create: jest.fn(styles => styles),
   },
 }));
 
 describe('NotFoundScreen', () => {
   it('should render not found message', () => {
     const { getByText } = render(<NotFoundScreen />);
-    
+
     expect(getByText("This screen doesn't exist.")).toBeTruthy();
   });
 
   it('should render link to home', () => {
     const { getByText } = render(<NotFoundScreen />);
-    
+
     expect(getByText('Go to home screen!')).toBeTruthy();
   });
 });

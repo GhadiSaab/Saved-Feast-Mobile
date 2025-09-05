@@ -31,8 +31,14 @@ interface User {
 export default function ProfileScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-  const { user: authUser, isAuthenticated, isLoading: authLoading, refreshUser, logout } = useAuth();
-  
+  const {
+    user: authUser,
+    isAuthenticated,
+    isLoading: authLoading,
+    refreshUser,
+    logout,
+  } = useAuth();
+
   const [user, setUser] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -51,7 +57,7 @@ export default function ProfileScreen() {
       try {
         setIsLoading(true);
         console.log('Loading user data in profile screen...');
-        
+
         if (!isAuthenticated || !authUser) {
           console.log('Not authenticated, redirecting to login');
           router.replace('/(auth)/login');
@@ -67,7 +73,6 @@ export default function ProfileScreen() {
           phone: authUser.phone || '',
           address: authUser.address || '',
         });
-        
       } catch (error) {
         console.error('Error loading user data:', error);
         Alert.alert('Error', 'Failed to load profile. Please try again.');
@@ -89,19 +94,19 @@ export default function ProfileScreen() {
     try {
       setIsSaving(true);
       console.log('Saving profile...');
-      
+
       const response = await api.post('/user/profile', {
         name: `${formData.first_name} ${formData.last_name}`.trim(),
         email: formData.email,
       });
-      
+
       const updatedUser = response.data.user;
       setUser(updatedUser);
       setIsEditing(false);
-      
+
       // Refresh user data in auth context
       await refreshUser();
-      
+
       Alert.alert('Success', 'Profile updated successfully');
     } catch (error: any) {
       console.error('Profile save error:', error);
@@ -112,26 +117,22 @@ export default function ProfileScreen() {
   };
 
   const handleLogout = async () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await logout();
-              router.replace('/(auth)/login');
-            } catch (error) {
-              console.error('Logout error:', error);
-              router.replace('/(auth)/login');
-            }
-          },
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await logout();
+            router.replace('/(auth)/login');
+          } catch (error) {
+            console.error('Logout error:', error);
+            router.replace('/(auth)/login');
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleRefresh = async () => {
@@ -154,39 +155,50 @@ export default function ProfileScreen() {
     {
       icon: 'heart-outline',
       title: 'Favorites',
-      onPress: () => Alert.alert('Coming Soon', 'Favorites feature will be available soon!'),
+      onPress: () =>
+        Alert.alert('Coming Soon', 'Favorites feature will be available soon!'),
     },
     {
       icon: 'notifications-outline',
       title: 'Notifications',
-      onPress: () => Alert.alert('Coming Soon', 'Notifications settings will be available soon!'),
+      onPress: () =>
+        Alert.alert(
+          'Coming Soon',
+          'Notifications settings will be available soon!'
+        ),
     },
     {
       icon: 'settings-outline',
       title: 'Settings',
-      onPress: () => Alert.alert('Coming Soon', 'Settings will be available soon!'),
+      onPress: () =>
+        Alert.alert('Coming Soon', 'Settings will be available soon!'),
     },
     {
       icon: 'help-circle-outline',
       title: 'Help & Support',
-      onPress: () => Alert.alert('Coming Soon', 'Help & Support will be available soon!'),
+      onPress: () =>
+        Alert.alert('Coming Soon', 'Help & Support will be available soon!'),
     },
     {
       icon: 'document-text-outline',
       title: 'Terms of Service',
-      onPress: () => Alert.alert('Coming Soon', 'Terms of Service will be available soon!'),
+      onPress: () =>
+        Alert.alert('Coming Soon', 'Terms of Service will be available soon!'),
     },
     {
       icon: 'shield-checkmark-outline',
       title: 'Privacy Policy',
-      onPress: () => Alert.alert('Coming Soon', 'Privacy Policy will be available soon!'),
+      onPress: () =>
+        Alert.alert('Coming Soon', 'Privacy Policy will be available soon!'),
     },
   ];
 
   // Show loading while auth is loading or profile is loading
   if (authLoading || isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.loadingContainer}>
           <LoadingSpinner size="large" />
           <Text style={[styles.loadingText, { color: colors.text }]}>
@@ -200,10 +212,18 @@ export default function ProfileScreen() {
   // Show error if not authenticated
   if (!isAuthenticated || !user) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={64} color={colors.primary} />
-          <Text style={[styles.errorTitle, { color: colors.text }]}>Authentication Required</Text>
+          <Ionicons
+            name="alert-circle-outline"
+            size={64}
+            color={colors.primary}
+          />
+          <Text style={[styles.errorTitle, { color: colors.text }]}>
+            Authentication Required
+          </Text>
           <Text style={[styles.errorMessage, { color: colors.text }]}>
             Please log in to access your profile.
           </Text>
@@ -220,7 +240,9 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -233,16 +255,14 @@ export default function ProfileScreen() {
           >
             <Ionicons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>Edit Profile</Text>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>
+            Edit Profile
+          </Text>
           <TouchableOpacity
             style={styles.refreshButton}
             onPress={handleRefresh}
           >
-            <Ionicons 
-              name="refresh" 
-              size={24} 
-              color={colors.primary} 
-            />
+            <Ionicons name="refresh" size={24} color={colors.primary} />
           </TouchableOpacity>
         </View>
 
@@ -251,7 +271,8 @@ export default function ProfileScreen() {
           <View style={styles.profileHeader}>
             <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
               <Text style={styles.avatarText}>
-                {user?.first_name?.charAt(0)?.toUpperCase()}{user?.last_name?.charAt(0)?.toUpperCase()}
+                {user?.first_name?.charAt(0)?.toUpperCase()}
+                {user?.last_name?.charAt(0)?.toUpperCase()}
               </Text>
             </View>
             <View style={styles.profileInfo}>
@@ -267,10 +288,10 @@ export default function ProfileScreen() {
               onPress={() => setIsEditing(!isEditing)}
               disabled={isSaving}
             >
-              <Ionicons 
-                name="pencil" 
-                size={20} 
-                color={isSaving ? colors.text + '40' : colors.primary} 
+              <Ionicons
+                name="pencil"
+                size={20}
+                color={isSaving ? colors.text + '40' : colors.primary}
               />
             </TouchableOpacity>
           </View>
@@ -280,22 +301,36 @@ export default function ProfileScreen() {
             <View style={styles.profileForm}>
               <View style={styles.formRow}>
                 <View style={[styles.inputContainer, styles.halfWidth]}>
-                  <Text style={[styles.inputLabel, { color: colors.text }]}>First Name</Text>
+                  <Text style={[styles.inputLabel, { color: colors.text }]}>
+                    First Name
+                  </Text>
                   <TextInput
-                    style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+                    style={[
+                      styles.input,
+                      { color: colors.text, borderColor: colors.border },
+                    ]}
                     value={formData.first_name}
-                    onChangeText={(value) => handleInputChange('first_name', value)}
+                    onChangeText={value =>
+                      handleInputChange('first_name', value)
+                    }
                     placeholder="First name"
                     placeholderTextColor={colors.text + '80'}
                     editable={!isSaving}
                   />
                 </View>
                 <View style={[styles.inputContainer, styles.halfWidth]}>
-                  <Text style={[styles.inputLabel, { color: colors.text }]}>Last Name</Text>
+                  <Text style={[styles.inputLabel, { color: colors.text }]}>
+                    Last Name
+                  </Text>
                   <TextInput
-                    style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+                    style={[
+                      styles.input,
+                      { color: colors.text, borderColor: colors.border },
+                    ]}
                     value={formData.last_name}
-                    onChangeText={(value) => handleInputChange('last_name', value)}
+                    onChangeText={value =>
+                      handleInputChange('last_name', value)
+                    }
                     placeholder="Last name"
                     placeholderTextColor={colors.text + '80'}
                     editable={!isSaving}
@@ -304,11 +339,16 @@ export default function ProfileScreen() {
               </View>
 
               <View style={styles.inputContainer}>
-                <Text style={[styles.inputLabel, { color: colors.text }]}>Email</Text>
+                <Text style={[styles.inputLabel, { color: colors.text }]}>
+                  Email
+                </Text>
                 <TextInput
-                  style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+                  style={[
+                    styles.input,
+                    { color: colors.text, borderColor: colors.border },
+                  ]}
                   value={formData.email}
-                  onChangeText={(value) => handleInputChange('email', value)}
+                  onChangeText={value => handleInputChange('email', value)}
                   placeholder="Email address"
                   placeholderTextColor={colors.text + '80'}
                   keyboardType="email-address"
@@ -318,11 +358,16 @@ export default function ProfileScreen() {
               </View>
 
               <View style={styles.inputContainer}>
-                <Text style={[styles.inputLabel, { color: colors.text }]}>Phone</Text>
+                <Text style={[styles.inputLabel, { color: colors.text }]}>
+                  Phone
+                </Text>
                 <TextInput
-                  style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+                  style={[
+                    styles.input,
+                    { color: colors.text, borderColor: colors.border },
+                  ]}
                   value={formData.phone}
-                  onChangeText={(value) => handleInputChange('phone', value)}
+                  onChangeText={value => handleInputChange('phone', value)}
                   placeholder="Phone number"
                   placeholderTextColor={colors.text + '80'}
                   keyboardType="phone-pad"
@@ -331,11 +376,16 @@ export default function ProfileScreen() {
               </View>
 
               <View style={styles.inputContainer}>
-                <Text style={[styles.inputLabel, { color: colors.text }]}>Address</Text>
+                <Text style={[styles.inputLabel, { color: colors.text }]}>
+                  Address
+                </Text>
                 <TextInput
-                  style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+                  style={[
+                    styles.input,
+                    { color: colors.text, borderColor: colors.border },
+                  ]}
                   value={formData.address}
-                  onChangeText={(value) => handleInputChange('address', value)}
+                  onChangeText={value => handleInputChange('address', value)}
                   placeholder="Address"
                   placeholderTextColor={colors.text + '80'}
                   multiline
@@ -354,7 +404,7 @@ export default function ProfileScreen() {
                   disabled={isSaving}
                 />
                 <Button
-                  title={isSaving ? "Saving..." : "Save"}
+                  title={isSaving ? 'Saving...' : 'Save'}
                   onPress={handleSaveProfile}
                   variant="primary"
                   size="medium"
@@ -369,13 +419,21 @@ export default function ProfileScreen() {
               {user?.phone && (
                 <View style={styles.detailRow}>
                   <Ionicons name="call-outline" size={20} color={colors.text} />
-                  <Text style={[styles.detailText, { color: colors.text }]}>{user.phone}</Text>
+                  <Text style={[styles.detailText, { color: colors.text }]}>
+                    {user.phone}
+                  </Text>
                 </View>
               )}
               {user?.address && (
                 <View style={styles.detailRow}>
-                  <Ionicons name="location-outline" size={20} color={colors.text} />
-                  <Text style={[styles.detailText, { color: colors.text }]}>{user.address}</Text>
+                  <Ionicons
+                    name="location-outline"
+                    size={20}
+                    color={colors.text}
+                  />
+                  <Text style={[styles.detailText, { color: colors.text }]}>
+                    {user.address}
+                  </Text>
                 </View>
               )}
             </View>
@@ -389,13 +447,22 @@ export default function ProfileScreen() {
               key={index}
               style={[
                 styles.menuItem,
-                index < menuItems.length - 1 && { borderBottomWidth: 1, borderBottomColor: colors.border }
+                index < menuItems.length - 1 && {
+                  borderBottomWidth: 1,
+                  borderBottomColor: colors.border,
+                },
               ]}
               onPress={item.onPress}
             >
               <View style={styles.menuItemLeft}>
-                <Ionicons name={item.icon as any} size={24} color={colors.text} />
-                <Text style={[styles.menuItemTitle, { color: colors.text }]}>{item.title}</Text>
+                <Ionicons
+                  name={item.icon as any}
+                  size={24}
+                  color={colors.text}
+                />
+                <Text style={[styles.menuItemTitle, { color: colors.text }]}>
+                  {item.title}
+                </Text>
               </View>
               <Ionicons name="chevron-forward" size={20} color={colors.text} />
             </TouchableOpacity>

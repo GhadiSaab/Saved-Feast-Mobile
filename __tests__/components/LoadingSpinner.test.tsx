@@ -8,38 +8,38 @@ jest.mock('react-native', () => ({
   ActivityIndicator: 'ActivityIndicator',
   Text: 'Text',
   StyleSheet: {
-    create: jest.fn((styles) => styles),
+    create: jest.fn(styles => styles),
   },
 }));
 
 describe('LoadingSpinner', () => {
   it('should render with default props', () => {
     const { getByTestId } = render(<LoadingSpinner />);
-    
+
     expect(getByTestId('loading-spinner')).toBeTruthy();
   });
 
   it('should render with small size', () => {
     const { getByTestId } = render(<LoadingSpinner size="small" />);
-    
+
     expect(getByTestId('loading-spinner')).toBeTruthy();
   });
 
   it('should render with large size', () => {
     const { getByTestId } = render(<LoadingSpinner size="large" />);
-    
+
     expect(getByTestId('loading-spinner')).toBeTruthy();
   });
 
-  it('should render with custom color', () => {
-    const { getByTestId } = render(<LoadingSpinner color="#FF0000" />);
-    
+  it('should render with fullScreen prop', () => {
+    const { getByTestId } = render(<LoadingSpinner fullScreen={true} />);
+
     expect(getByTestId('loading-spinner')).toBeTruthy();
   });
 
   it('should render with message', () => {
     const { getByText } = render(<LoadingSpinner message="Loading..." />);
-    
+
     expect(getByText('Loading...')).toBeTruthy();
   });
 });

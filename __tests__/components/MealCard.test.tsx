@@ -53,15 +53,15 @@ describe('MealCard', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     (useAuth as jest.Mock).mockReturnValue({
       isAuthenticated: true,
     });
-    
+
     (useCart as jest.Mock).mockReturnValue({
       addToCart: mockAddToCart,
     });
-    
+
     (mealService.toggleFavorite as jest.Mock).mockResolvedValue({
       is_favorited: true,
       meal_id: 1,
@@ -69,20 +69,18 @@ describe('MealCard', () => {
   });
 
   it('should render meal information correctly', () => {
-    const { getByText } = render(
-      <MealCard meal={mockMeal} />
-    );
+    const { getByText } = render(<MealCard meal={mockMeal} />);
 
     expect(getByText('Delicious Pizza')).toBeTruthy();
-    expect(getByText('A mouth-watering pizza with fresh ingredients')).toBeTruthy();
+    expect(
+      getByText('A mouth-watering pizza with fresh ingredients')
+    ).toBeTruthy();
     expect(getByText('€15.99')).toBeTruthy();
     expect(getByText('Pizza Palace')).toBeTruthy();
   });
 
   it('should display savings percentage when original price is higher', () => {
-    const { getByText } = render(
-      <MealCard meal={mockMeal} />
-    );
+    const { getByText } = render(<MealCard meal={mockMeal} />);
 
     expect(getByText('24% OFF')).toBeTruthy();
   });
@@ -111,30 +109,24 @@ describe('MealCard', () => {
   });
 
   it('should navigate to meal detail when card is pressed without onPress prop', () => {
-    const { getByTestId } = render(
-      <MealCard meal={mockMeal} />
-    );
+    const { getByTestId } = render(<MealCard meal={mockMeal} />);
 
     fireEvent.press(getByTestId('meal-card'));
     expect(router.push).toHaveBeenCalledWith('/meal/1');
   });
 
   it('should add meal to cart when Add to Cart button is pressed', () => {
-    const { getByText } = render(
-      <MealCard meal={mockMeal} />
-    );
+    const { getByText } = render(<MealCard meal={mockMeal} />);
 
     fireEvent.press(getByText('Add to Cart'));
     expect(mockAddToCart).toHaveBeenCalledWith(mockMeal);
   });
 
   it('should show success animation when meal is added to cart', async () => {
-    const { getByText, queryByText } = render(
-      <MealCard meal={mockMeal} />
-    );
+    const { getByText, queryByText } = render(<MealCard meal={mockMeal} />);
 
     fireEvent.press(getByText('Add to Cart'));
-    
+
     await waitFor(() => {
       expect(queryByText('Added!')).toBeTruthy();
     });
@@ -143,14 +135,11 @@ describe('MealCard', () => {
   it('should toggle favorite when heart icon is pressed', async () => {
     const mockOnFavoriteToggle = jest.fn();
     const { getByTestId } = render(
-      <MealCard 
-        meal={mockMeal} 
-        onFavoriteToggle={mockOnFavoriteToggle}
-      />
+      <MealCard meal={mockMeal} onFavoriteToggle={mockOnFavoriteToggle} />
     );
 
     fireEvent.press(getByTestId('favorite-button'));
-    
+
     await waitFor(() => {
       expect(mealService.toggleFavorite).toHaveBeenCalledWith(1);
       expect(mockOnFavoriteToggle).toHaveBeenCalledWith(1, true);
@@ -158,14 +147,14 @@ describe('MealCard', () => {
   });
 
   it('should handle favorite toggle error gracefully', async () => {
-    (mealService.toggleFavorite as jest.Mock).mockRejectedValue(new Error('API Error'));
-    
-    const { getByTestId } = render(
-      <MealCard meal={mockMeal} />
+    (mealService.toggleFavorite as jest.Mock).mockRejectedValue(
+      new Error('API Error')
     );
 
+    const { getByTestId } = render(<MealCard meal={mockMeal} />);
+
     fireEvent.press(getByTestId('favorite-button'));
-    
+
     // Should not throw error
     await waitFor(() => {
       expect(mealService.toggleFavorite).toHaveBeenCalledWith(1);
@@ -191,9 +180,7 @@ describe('MealCard', () => {
   });
 
   it('should format pickup time correctly', () => {
-    const { getByText } = render(
-      <MealCard meal={mockMeal} />
-    );
+    const { getByText } = render(<MealCard meal={mockMeal} />);
 
     // Should show pickup time range
     expect(getByText(/10:00 AM - 10:00 PM/)).toBeTruthy();
@@ -202,13 +189,11 @@ describe('MealCard', () => {
   it('should handle missing pickup time gracefully', () => {
     const mealWithoutTime = {
       ...mockMeal,
-      available_from: null,
-      available_until: null,
+      available_from: '',
+      available_until: '',
     };
 
-    const { queryByText } = render(
-      <MealCard meal={mealWithoutTime} />
-    );
+    const { queryByText } = render(<MealCard meal={mealWithoutTime} />);
 
     // Should not show pickup time
     expect(queryByText(/AM - PM/)).toBeNull();
@@ -216,24 +201,22 @@ describe('MealCard', () => {
 
   it('should show loading state when toggling favorite', async () => {
     let resolvePromise: (value: any) => void;
-    const promise = new Promise((resolve) => {
+    const promise = new Promise(resolve => {
       resolvePromise = resolve;
     });
-    
+
     (mealService.toggleFavorite as jest.Mock).mockReturnValue(promise);
 
-    const { getByTestId } = render(
-      <MealCard meal={mockMeal} />
-    );
+    const { getByTestId } = render(<MealCard meal={mockMeal} />);
 
     fireEvent.press(getByTestId('favorite-button'));
-    
+
     // Should show loading state
     expect(getByTestId('favorite-loading')).toBeTruthy();
-    
+
     // Resolve the promise
     resolvePromise!({ is_favorited: true, meal_id: 1 });
-    
+
     await waitFor(() => {
       expect(getByTestId('favorite-loading')).toBeFalsy();
     });
@@ -244,12 +227,10 @@ describe('MealCard', () => {
       isAuthenticated: false,
     });
 
-    const { getByTestId } = render(
-      <MealCard meal={mockMeal} />
-    );
+    const { getByTestId } = render(<MealCard meal={mockMeal} />);
 
     fireEvent.press(getByTestId('favorite-button'));
-    
+
     // Should navigate to login
     expect(router.push).toHaveBeenCalledWith('/(auth)/login');
   });
@@ -259,20 +240,16 @@ describe('MealCard', () => {
       isAuthenticated: false,
     });
 
-    const { getByText } = render(
-      <MealCard meal={mockMeal} />
-    );
+    const { getByText } = render(<MealCard meal={mockMeal} />);
 
     fireEvent.press(getByText('Add to Cart'));
-    
+
     // Should navigate to login
     expect(router.push).toHaveBeenCalledWith('/(auth)/login');
   });
 
   it('should display category information', () => {
-    const { getByText } = render(
-      <MealCard meal={mockMeal} />
-    );
+    const { getByText } = render(<MealCard meal={mockMeal} />);
 
     expect(getByText('Italian')).toBeTruthy();
   });
@@ -280,12 +257,10 @@ describe('MealCard', () => {
   it('should handle missing category gracefully', () => {
     const mealWithoutCategory = {
       ...mockMeal,
-      category: null,
+      category: undefined,
     };
 
-    const { queryByText } = render(
-      <MealCard meal={mealWithoutCategory} />
-    );
+    const { queryByText } = render(<MealCard meal={mealWithoutCategory} />);
 
     expect(queryByText('Italian')).toBeNull();
   });
@@ -293,12 +268,10 @@ describe('MealCard', () => {
   it('should handle missing restaurant gracefully', () => {
     const mealWithoutRestaurant = {
       ...mockMeal,
-      restaurant: null,
+      restaurant: undefined,
     };
 
-    const { queryByText } = render(
-      <MealCard meal={mealWithoutRestaurant} />
-    );
+    const { queryByText } = render(<MealCard meal={mealWithoutRestaurant} />);
 
     expect(queryByText('Pizza Palace')).toBeNull();
   });

@@ -6,14 +6,14 @@ import { ThemedText } from '../../components/ThemedText';
 jest.mock('react-native', () => ({
   Text: 'Text',
   StyleSheet: {
-    create: jest.fn((styles) => styles),
+    create: jest.fn(styles => styles),
   },
 }));
 
 describe('ThemedText', () => {
   it('should render text content', () => {
     const { getByText } = render(<ThemedText>Hello World</ThemedText>);
-    
+
     expect(getByText('Hello World')).toBeTruthy();
   });
 
@@ -22,7 +22,7 @@ describe('ThemedText', () => {
     const { getByText } = render(
       <ThemedText style={customStyle}>Styled text</ThemedText>
     );
-    
+
     expect(getByText('Styled text')).toBeTruthy();
   });
 
@@ -32,7 +32,7 @@ describe('ThemedText', () => {
         Themed text
       </ThemedText>
     );
-    
+
     expect(getByText('Themed text')).toBeTruthy();
   });
 });

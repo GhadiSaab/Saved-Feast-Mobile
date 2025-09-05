@@ -1,4 +1,8 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -66,13 +70,21 @@ export default function RootLayout() {
       <AuthProvider>
         <AuthGuard>
           <CartProvider>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <ThemeProvider
+              value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+            >
               <Stack>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen name="checkout" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="checkout"
+                  options={{ headerShown: false }}
+                />
                 <Stack.Screen name="orders" options={{ headerShown: false }} />
-                <Stack.Screen name="settings" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="settings"
+                  options={{ headerShown: false }}
+                />
                 <Stack.Screen name="+not-found" />
               </Stack>
               <StatusBar style="auto" />

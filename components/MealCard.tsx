@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Alert, Animated } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  Alert,
+  Animated,
+} from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from './ui/Card';
@@ -8,8 +16,7 @@ import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
-import { Meal } from '@/lib/meals';
-import mealService from '@/lib/meals';
+import { Meal, default as mealService } from '@/lib/meals';
 import { router } from 'expo-router';
 
 interface MealCardProps {
@@ -22,17 +29,17 @@ interface MealCardProps {
 const { width } = Dimensions.get('window');
 const cardWidth = (width - 48) / 2; // 2 columns with margins
 
-export const MealCard: React.FC<MealCardProps> = ({ 
-  meal, 
-  onPress, 
+export const MealCard: React.FC<MealCardProps> = ({
+  meal,
+  onPress,
   isFavorited = false,
-  onFavoriteToggle 
+  onFavoriteToggle,
 }) => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { isAuthenticated } = useAuth();
   const { addToCart } = useCart();
-  
+
   const [buttonScale] = useState(new Animated.Value(1));
   const [showSuccess, setShowSuccess] = useState(false);
   const [favoriteLoading, setFavoriteLoading] = useState(false);
@@ -40,7 +47,9 @@ export const MealCard: React.FC<MealCardProps> = ({
 
   const calculateSavings = () => {
     if (meal.original_price && meal.original_price > meal.current_price) {
-      const savings = ((meal.original_price - meal.current_price) / meal.original_price) * 100;
+      const savings =
+        ((meal.original_price - meal.current_price) / meal.original_price) *
+        100;
       return Math.round(savings);
     }
     return 0;
@@ -48,13 +57,13 @@ export const MealCard: React.FC<MealCardProps> = ({
 
   const formatPickupTime = () => {
     if (meal.available_from && meal.available_until) {
-      const fromTime = new Date(meal.available_from).toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit' 
+      const fromTime = new Date(meal.available_from).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
       });
-      const untilTime = new Date(meal.available_until).toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit' 
+      const untilTime = new Date(meal.available_until).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
       });
       return `${fromTime} - ${untilTime}`;
     }
@@ -85,7 +94,7 @@ export const MealCard: React.FC<MealCardProps> = ({
 
   const handleAddToCart = () => {
     animateButton();
-    
+
     if (isAuthenticated) {
       addToCart({
         id: meal.id,
@@ -136,7 +145,10 @@ export const MealCard: React.FC<MealCardProps> = ({
 
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.9}>
-      <Card style={[styles.container, { width: cardWidth }] as any} elevation={3}>
+      <Card
+        style={[styles.container, { width: cardWidth }] as any}
+        elevation={3}
+      >
         {/* Image Section */}
         <View style={styles.imageContainer}>
           {meal.image ? (
@@ -147,24 +159,26 @@ export const MealCard: React.FC<MealCardProps> = ({
               placeholder="🍽️"
             />
           ) : (
-            <View style={[styles.placeholder, { backgroundColor: colors.primary }]}>
+            <View
+              style={[styles.placeholder, { backgroundColor: colors.primary }]}
+            >
               <Ionicons name="restaurant" size={32} color="#FFFFFF" />
             </View>
           )}
-          
+
           {/* Favorite Button */}
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.favoriteButton}
             onPress={handleFavoriteToggle}
             disabled={favoriteLoading}
           >
-            <Ionicons 
-              name={favorited ? "heart" : "heart-outline"} 
-              size={24} 
-              color={favorited ? "#FF6B6B" : "#FFFFFF"} 
+            <Ionicons
+              name={favorited ? 'heart' : 'heart-outline'}
+              size={24}
+              color={favorited ? '#FF6B6B' : '#FFFFFF'}
             />
           </TouchableOpacity>
-          
+
           {/* Savings Badge */}
           {savingsPercentage > 0 && (
             <View style={styles.savingsBadge}>
@@ -184,18 +198,27 @@ export const MealCard: React.FC<MealCardProps> = ({
         <View style={styles.content}>
           {/* Title and Restaurant */}
           <View style={styles.header}>
-            <Text style={[styles.title, { color: colors.text }]} numberOfLines={2}>
+            <Text
+              style={[styles.title, { color: colors.text }]}
+              numberOfLines={2}
+            >
               {meal.title}
             </Text>
             {meal.restaurant && (
-              <Text style={[styles.restaurantName, { color: colors.text }]} numberOfLines={1}>
+              <Text
+                style={[styles.restaurantName, { color: colors.text }]}
+                numberOfLines={1}
+              >
                 {meal.restaurant.name}
               </Text>
             )}
           </View>
 
           {/* Description */}
-          <Text style={[styles.description, { color: colors.text }]} numberOfLines={2}>
+          <Text
+            style={[styles.description, { color: colors.text }]}
+            numberOfLines={2}
+          >
             {meal.description || 'No description available.'}
           </Text>
 
@@ -210,9 +233,12 @@ export const MealCard: React.FC<MealCardProps> = ({
           {/* Price and Action */}
           <View style={styles.footer}>
             <View style={styles.priceContainer}>
-              {meal.original_price && meal.original_price > meal.current_price ? (
+              {meal.original_price &&
+              meal.original_price > meal.current_price ? (
                 <View style={styles.priceColumn}>
-                  <Text style={[styles.currentPrice, { color: colors.primary }]}>
+                  <Text
+                    style={[styles.currentPrice, { color: colors.primary }]}
+                  >
                     €{meal.current_price.toFixed(2)}
                   </Text>
                   <Text style={[styles.originalPrice, { color: colors.text }]}>
@@ -225,18 +251,21 @@ export const MealCard: React.FC<MealCardProps> = ({
                 </Text>
               )}
             </View>
-            
+
             <View style={styles.buttonContainer}>
               <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
                 <Button
-                  title={showSuccess ? "Added!" : "Add"}
+                  title={showSuccess ? 'Added!' : 'Add'}
                   onPress={handleAddToCart}
                   variant="primary"
                   size="small"
-                  style={{ ...styles.addButton, backgroundColor: showSuccess ? '#27AE60' : colors.primary }}
+                  style={{
+                    ...styles.addButton,
+                    backgroundColor: showSuccess ? '#27AE60' : colors.primary,
+                  }}
                 />
               </Animated.View>
-              
+
               {/* Success Checkmark */}
               {showSuccess && (
                 <Animated.View style={styles.successCheckmark}>

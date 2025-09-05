@@ -154,11 +154,11 @@ jest.mock('react-native-reanimated', () => ({
     Text: 'Text',
     ScrollView: 'ScrollView',
   },
-  useSharedValue: jest.fn((value) => ({ value })),
+  useSharedValue: jest.fn(value => ({ value })),
   withRepeat: jest.fn((animation, iterations) => animation),
   withTiming: jest.fn((value, config) => value),
   withSequence: jest.fn((...animations) => animations[0]),
-  useAnimatedStyle: jest.fn((style) => style),
+  useAnimatedStyle: jest.fn(style => style),
   Easing: {
     linear: jest.fn(),
   },
@@ -182,20 +182,49 @@ jest.mock('react-native', () => ({
     get: jest.fn(() => ({ width: 400, height: 800 })),
   },
   StyleSheet: {
-    create: jest.fn((styles) => styles),
-    flatten: jest.fn((style) => {
+    create: jest.fn(styles => styles),
+    flatten: jest.fn(style => {
       if (Array.isArray(style)) {
         return style.reduce((acc, s) => ({ ...acc, ...s }), {});
       }
       return style || {};
     }),
+    absoluteFill: {},
+    absoluteFillObject: {},
+    hairlineWidth: 1,
   },
   Platform: {
     OS: 'ios',
-    select: jest.fn((obj) => obj.ios || obj.default),
+    select: jest.fn(obj => obj.ios || obj.default),
   },
   StatusBar: 'StatusBar',
   SafeAreaView: 'SafeAreaView',
+  ActivityIndicator: 'ActivityIndicator',
+  Animated: {
+    Value: jest.fn(value => ({
+      _value: value,
+      setValue: jest.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      removeAllListeners: jest.fn(),
+      stopAnimation: jest.fn(),
+      interpolate: jest.fn(() => value),
+    })),
+    timing: jest.fn(() => ({
+      start: jest.fn(callback => callback && callback({ finished: true })),
+    })),
+    sequence: jest.fn(animations => ({
+      start: jest.fn(callback => callback && callback({ finished: true })),
+    })),
+    parallel: jest.fn(animations => ({
+      start: jest.fn(callback => callback && callback({ finished: true })),
+    })),
+    View: 'View',
+    Text: 'Text',
+    ScrollView: 'ScrollView',
+    FlatList: 'FlatList',
+    Image: 'Image',
+  },
 }));
 
 // Global test setup
@@ -208,3 +237,14 @@ global.console = {
   warn: jest.fn(),
   error: jest.fn(),
 };
+
+// Fix StyleSheet.flatten for testing
+const { StyleSheet } = require('react-native');
+if (StyleSheet && StyleSheet.flatten) {
+  StyleSheet.flatten = jest.fn(style => {
+    if (Array.isArray(style)) {
+      return style.reduce((acc, s) => ({ ...acc, ...s }), {});
+    }
+    return style || {};
+  });
+}

@@ -6,7 +6,7 @@ import { Card } from '../../../components/ui/Card';
 jest.mock('react-native', () => ({
   View: 'View',
   StyleSheet: {
-    create: jest.fn((styles) => styles),
+    create: jest.fn(styles => styles),
   },
 }));
 
@@ -17,7 +17,7 @@ describe('Card', () => {
         <div>Card content</div>
       </Card>
     );
-    
+
     expect(getByText('Card content')).toBeTruthy();
   });
 
@@ -28,7 +28,7 @@ describe('Card', () => {
         <div>Card content</div>
       </Card>
     );
-    
+
     expect(getByTestId('card')).toBeTruthy();
   });
 
@@ -38,7 +38,7 @@ describe('Card', () => {
         <div>Card content</div>
       </Card>
     );
-    
+
     expect(getByTestId('card')).toBeTruthy();
   });
 });

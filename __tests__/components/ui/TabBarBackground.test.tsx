@@ -1,5 +1,7 @@
 import React from 'react';
-import TabBarBackground, { useBottomTabOverflow } from '../../../components/ui/TabBarBackground';
+import TabBarBackground, {
+  useBottomTabOverflow,
+} from '../../../components/ui/TabBarBackground';
 
 describe('TabBarBackground', () => {
   it('should export undefined for TabBarBackground', () => {

@@ -15,12 +15,15 @@ We are committed to providing security updates for the following versions:
 We take security vulnerabilities seriously. If you discover a security issue, please follow these steps:
 
 ### 1. **DO NOT** create a public GitHub issue
+
 Security vulnerabilities should be reported privately to prevent potential exploitation.
 
 ### 2. Email us directly
+
 Send a detailed report to: **security@savedfeast.com**
 
 ### 3. Include the following information in your report:
+
 - **Description**: Clear description of the vulnerability
 - **Steps to Reproduce**: Detailed steps to reproduce the issue
 - **Impact**: Potential impact of the vulnerability
@@ -29,6 +32,7 @@ Send a detailed report to: **security@savedfeast.com**
 - **Suggested Fix**: If you have suggestions for fixing the issue
 
 ### 4. What to expect:
+
 - **Initial Response**: Within 24-48 hours
 - **Status Updates**: Regular updates on the progress
 - **Resolution**: Public disclosure after the fix is deployed
@@ -37,6 +41,7 @@ Send a detailed report to: **security@savedfeast.com**
 ## Security Best Practices
 
 ### For Users:
+
 - Keep the app updated to the latest version
 - Use strong, unique passwords
 - Enable two-factor authentication when available
@@ -44,6 +49,7 @@ Send a detailed report to: **security@savedfeast.com**
 - Report suspicious activity immediately
 
 ### For Developers:
+
 - Follow secure coding practices
 - Use HTTPS for all API communications
 - Implement proper input validation
@@ -53,18 +59,21 @@ Send a detailed report to: **security@savedfeast.com**
 ## Security Features
 
 ### Authentication & Authorization:
+
 - Token-based authentication with Laravel Sanctum
 - Secure token storage using Expo SecureStore
 - Automatic token refresh
 - Role-based access control
 
 ### Data Protection:
+
 - Encrypted storage for sensitive data
 - Secure API communication
 - Input validation and sanitization
 - Rate limiting on API endpoints
 
 ### Network Security:
+
 - HTTPS enforcement
 - Certificate pinning (planned)
 - Secure WebSocket connections
@@ -72,12 +81,12 @@ Send a detailed report to: **security@savedfeast.com**
 
 ## Vulnerability Disclosure Timeline
 
-| Action | Timeline |
-|--------|----------|
-| Initial Response | 24-48 hours |
-| Status Update | 1 week |
-| Fix Development | 2-4 weeks |
-| Fix Deployment | 1 week |
+| Action            | Timeline             |
+| ----------------- | -------------------- |
+| Initial Response  | 24-48 hours          |
+| Status Update     | 1 week               |
+| Fix Development   | 2-4 weeks            |
+| Fix Deployment    | 1 week               |
 | Public Disclosure | After fix deployment |
 
 ## Security Acknowledgments
@@ -90,10 +99,12 @@ We would like to thank the following security researchers for their contribution
 ## Security Updates
 
 ### Recent Security Fixes:
+
 - **v1.0.1**: Fixed token storage vulnerability
 - **v1.0.0**: Initial security audit and fixes
 
 ### Upcoming Security Features:
+
 - Certificate pinning implementation
 - Biometric authentication support
 - Enhanced encryption for local storage
@@ -108,6 +119,7 @@ We would like to thank the following security researchers for their contribution
 ## Responsible Disclosure
 
 We follow responsible disclosure practices:
+
 1. **Private Reporting**: Vulnerabilities are reported privately
 2. **Timely Response**: We respond to reports within 24-48 hours
 3. **Collaborative Fixing**: We work with reporters to develop fixes

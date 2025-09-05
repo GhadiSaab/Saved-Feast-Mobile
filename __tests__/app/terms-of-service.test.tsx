@@ -15,20 +15,20 @@ jest.mock('react-native', () => ({
   Text: 'Text',
   ScrollView: 'ScrollView',
   StyleSheet: {
-    create: jest.fn((styles) => styles),
+    create: jest.fn(styles => styles),
   },
 }));
 
 describe('TermsOfServiceScreen', () => {
   it('should render terms of service content', () => {
     const { getByText } = render(<TermsOfServiceScreen />);
-    
+
     expect(getByText('Terms of Service')).toBeTruthy();
   });
 
   it('should render last updated date', () => {
     const { getByText } = render(<TermsOfServiceScreen />);
-    
+
     expect(getByText(/Last updated:/)).toBeTruthy();
   });
 });

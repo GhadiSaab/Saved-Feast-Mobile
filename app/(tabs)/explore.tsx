@@ -22,7 +22,8 @@ export default function CartScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { isAuthenticated } = useAuth();
-  const { cartItems, removeFromCart, updateQuantity, getCartTotal, clearCart } = useCart();
+  const { cartItems, removeFromCart, updateQuantity, getCartTotal, clearCart } =
+    useCart();
 
   const handleQuantityChange = (itemId: number, newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -31,7 +32,11 @@ export default function CartScreen() {
         'Are you sure you want to remove this item from your cart?',
         [
           { text: 'Cancel', style: 'cancel' },
-          { text: 'Remove', style: 'destructive', onPress: () => removeFromCart(itemId) },
+          {
+            text: 'Remove',
+            style: 'destructive',
+            onPress: () => removeFromCart(itemId),
+          },
         ]
       );
     } else {
@@ -44,9 +49,12 @@ export default function CartScreen() {
       router.push('/login');
       return;
     }
-    
+
     if (cartItems.length === 0) {
-      Alert.alert('Empty Cart', 'Please add some items to your cart before checkout.');
+      Alert.alert(
+        'Empty Cart',
+        'Please add some items to your cart before checkout.'
+      );
       return;
     }
 
@@ -54,14 +62,10 @@ export default function CartScreen() {
   };
 
   const handleClearCart = () => {
-    Alert.alert(
-      'Clear Cart',
-      'Are you sure you want to clear your cart?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Clear', style: 'destructive', onPress: clearCart },
-      ]
-    );
+    Alert.alert('Clear Cart', 'Are you sure you want to clear your cart?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Clear', style: 'destructive', onPress: clearCart },
+    ]);
   };
 
   const renderCartItem = ({ item }: { item: any }) => (
@@ -75,7 +79,12 @@ export default function CartScreen() {
             placeholder="🍽️"
           />
         ) : (
-          <View style={[styles.itemPlaceholder, { backgroundColor: colors.primary }]}>
+          <View
+            style={[
+              styles.itemPlaceholder,
+              { backgroundColor: colors.primary },
+            ]}
+          >
             <Ionicons name="restaurant" size={24} color="#FFFFFF" />
           </View>
         )}
@@ -83,11 +92,17 @@ export default function CartScreen() {
 
       <View style={styles.itemContent}>
         <View style={styles.itemHeader}>
-          <Text style={[styles.itemTitle, { color: colors.text }]} numberOfLines={2}>
+          <Text
+            style={[styles.itemTitle, { color: colors.text }]}
+            numberOfLines={2}
+          >
             {item.name}
           </Text>
           {item.restaurant && (
-            <Text style={[styles.itemRestaurant, { color: colors.text }]} numberOfLines={1}>
+            <Text
+              style={[styles.itemRestaurant, { color: colors.text }]}
+              numberOfLines={1}
+            >
               {item.restaurant}
             </Text>
           )}
@@ -100,18 +115,24 @@ export default function CartScreen() {
 
           <View style={styles.quantityContainer}>
             <TouchableOpacity
-              style={[styles.quantityButton, { backgroundColor: colors.primary }]}
+              style={[
+                styles.quantityButton,
+                { backgroundColor: colors.primary },
+              ]}
               onPress={() => handleQuantityChange(item.id, item.quantity - 1)}
             >
               <Ionicons name="remove" size={16} color="#FFFFFF" />
             </TouchableOpacity>
-            
+
             <Text style={[styles.quantityText, { color: colors.text }]}>
               {item.quantity}
             </Text>
-            
+
             <TouchableOpacity
-              style={[styles.quantityButton, { backgroundColor: colors.primary }]}
+              style={[
+                styles.quantityButton,
+                { backgroundColor: colors.primary },
+              ]}
               onPress={() => handleQuantityChange(item.id, item.quantity + 1)}
             >
               <Ionicons name="add" size={16} color="#FFFFFF" />
@@ -132,7 +153,9 @@ export default function CartScreen() {
   const renderEmptyCart = () => (
     <View style={styles.emptyCart}>
       <Ionicons name="cart-outline" size={80} color={colors.text + '40'} />
-      <Text style={[styles.emptyCartTitle, { color: colors.text }]}>Your cart is empty</Text>
+      <Text style={[styles.emptyCartTitle, { color: colors.text }]}>
+        Your cart is empty
+      </Text>
       <Text style={[styles.emptyCartSubtitle, { color: colors.text }]}>
         Add some delicious meals to get started!
       </Text>
@@ -146,13 +169,19 @@ export default function CartScreen() {
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
       <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>Your Cart</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>
+          Your Cart
+        </Text>
         {cartItems.length > 0 && (
           <TouchableOpacity onPress={handleClearCart}>
-            <Text style={[styles.clearButton, { color: colors.error }]}>Clear All</Text>
+            <Text style={[styles.clearButton, { color: colors.error }]}>
+              Clear All
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -162,11 +191,11 @@ export default function CartScreen() {
         <FlatList
           data={cartItems}
           renderItem={renderCartItem}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={item => item.id.toString()}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={[
             styles.listContent,
-            cartItems.length > 0 && { paddingBottom: 180 } // Space for floating checkout
+            cartItems.length > 0 && { paddingBottom: 180 }, // Space for floating checkout
           ]}
         />
       ) : (
@@ -178,12 +207,14 @@ export default function CartScreen() {
         <View style={styles.checkoutSection}>
           <Card style={styles.checkoutCard} elevation={4}>
             <View style={styles.totalRow}>
-              <Text style={[styles.totalLabel, { color: colors.text }]}>Total</Text>
+              <Text style={[styles.totalLabel, { color: colors.text }]}>
+                Total
+              </Text>
               <Text style={[styles.totalAmount, { color: colors.primary }]}>
                 €{getCartTotal().toFixed(2)}
               </Text>
             </View>
-            
+
             <View style={styles.itemCountRow}>
               <Text style={[styles.itemCount, { color: colors.text }]}>
                 {cartItems.reduce((sum, item) => sum + item.quantity, 0)} items
@@ -191,7 +222,9 @@ export default function CartScreen() {
             </View>
 
             <Button
-              title={isAuthenticated ? "Proceed to Checkout" : "Sign In to Checkout"}
+              title={
+                isAuthenticated ? 'Proceed to Checkout' : 'Sign In to Checkout'
+              }
               onPress={handleCheckout}
               variant="primary"
               size="large"

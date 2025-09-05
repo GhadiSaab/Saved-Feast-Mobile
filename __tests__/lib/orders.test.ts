@@ -1,4 +1,8 @@
-import orderService, { Order, CreateOrderData, OrderItem } from '../../lib/orders';
+import orderService, {
+  Order,
+  CreateOrderData,
+  OrderItem,
+} from '../../lib/orders';
 import api from '../../lib/api';
 
 // Mock the api module
@@ -90,7 +94,9 @@ describe('OrderService', () => {
 
       (api.get as jest.Mock).mockRejectedValue(errorResponse);
 
-      await expect(orderService.getOrders()).rejects.toThrow('Unauthorized access');
+      await expect(orderService.getOrders()).rejects.toThrow(
+        'Unauthorized access'
+      );
     });
 
     it('should handle API errors without message', async () => {
@@ -102,7 +108,9 @@ describe('OrderService', () => {
 
       (api.get as jest.Mock).mockRejectedValue(errorResponse);
 
-      await expect(orderService.getOrders()).rejects.toThrow('Failed to fetch orders');
+      await expect(orderService.getOrders()).rejects.toThrow(
+        'Failed to fetch orders'
+      );
     });
   });
 
@@ -153,7 +161,9 @@ describe('OrderService', () => {
 
       (api.get as jest.Mock).mockRejectedValue(errorResponse);
 
-      await expect(orderService.getOrder(999)).rejects.toThrow('Order not found');
+      await expect(orderService.getOrder(999)).rejects.toThrow(
+        'Order not found'
+      );
     });
   });
 
@@ -302,7 +312,9 @@ describe('OrderService', () => {
 
   describe('cancelOrder', () => {
     it('should cancel an order successfully', async () => {
-      (api.post as jest.Mock).mockResolvedValue({ data: { message: 'Order cancelled' } });
+      (api.post as jest.Mock).mockResolvedValue({
+        data: { message: 'Order cancelled' },
+      });
 
       await orderService.cancelOrder(1);
 
@@ -320,7 +332,9 @@ describe('OrderService', () => {
 
       (api.post as jest.Mock).mockRejectedValue(errorResponse);
 
-      await expect(orderService.cancelOrder(1)).rejects.toThrow('Cannot cancel order');
+      await expect(orderService.cancelOrder(1)).rejects.toThrow(
+        'Cannot cancel order'
+      );
     });
 
     it('should handle API errors without message', async () => {
@@ -332,13 +346,17 @@ describe('OrderService', () => {
 
       (api.post as jest.Mock).mockRejectedValue(errorResponse);
 
-      await expect(orderService.cancelOrder(1)).rejects.toThrow('Failed to cancel order');
+      await expect(orderService.cancelOrder(1)).rejects.toThrow(
+        'Failed to cancel order'
+      );
     });
   });
 
   describe('completeOrder', () => {
     it('should complete an order successfully', async () => {
-      (api.post as jest.Mock).mockResolvedValue({ data: { message: 'Order completed' } });
+      (api.post as jest.Mock).mockResolvedValue({
+        data: { message: 'Order completed' },
+      });
 
       await orderService.completeOrder(1);
 
@@ -356,7 +374,9 @@ describe('OrderService', () => {
 
       (api.post as jest.Mock).mockRejectedValue(errorResponse);
 
-      await expect(orderService.completeOrder(1)).rejects.toThrow('Cannot complete order');
+      await expect(orderService.completeOrder(1)).rejects.toThrow(
+        'Cannot complete order'
+      );
     });
 
     it('should handle API errors without message', async () => {
@@ -368,7 +388,9 @@ describe('OrderService', () => {
 
       (api.post as jest.Mock).mockRejectedValue(errorResponse);
 
-      await expect(orderService.completeOrder(1)).rejects.toThrow('Failed to complete order');
+      await expect(orderService.completeOrder(1)).rejects.toThrow(
+        'Failed to complete order'
+      );
     });
   });
 });

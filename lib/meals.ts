@@ -56,9 +56,12 @@ export interface MealFilters {
 }
 
 class MealService {
-  private async retryRequest<T>(requestFn: () => Promise<T>, maxRetries: number = 3): Promise<T> {
+  private async retryRequest<T>(
+    requestFn: () => Promise<T>,
+    maxRetries: number = 3
+  ): Promise<T> {
     let lastError: any;
-    
+
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         console.log(`Attempt ${attempt}/${maxRetries} for API request`);
@@ -66,12 +69,16 @@ class MealService {
       } catch (error: any) {
         lastError = error;
         console.log(`Attempt ${attempt} failed:`, error.message);
-        
+
         // Don't retry on authentication errors or client errors
-        if (error.response?.status === 401 || error.response?.status === 403 || error.response?.status === 404) {
+        if (
+          error.response?.status === 401 ||
+          error.response?.status === 403 ||
+          error.response?.status === 404
+        ) {
           throw error;
         }
-        
+
         // Wait before retrying (exponential backoff with longer delays)
         if (attempt < maxRetries) {
           const delay = Math.min(Math.pow(2, attempt) * 2000, 10000); // Max 10 seconds delay
@@ -80,7 +87,7 @@ class MealService {
         }
       }
     }
-    
+
     console.error('All retry attempts failed:', lastError);
     throw lastError;
   }
@@ -88,7 +95,7 @@ class MealService {
   async getMeals(filters: MealFilters = {}): Promise<ApiResponse> {
     return this.retryRequest(async () => {
       const params = new URLSearchParams();
-      
+
       // Add filters to params
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
@@ -98,15 +105,15 @@ class MealService {
 
       console.log('Fetching meals with params:', params.toString());
       const response = await api.get(`/meals?${params.toString()}`);
-      
+
       console.log('Meals response received successfully');
-      
+
       // Validate response structure
       if (!response.data || !Array.isArray(response.data.data)) {
         console.error('Invalid meals response format:', response.data);
         throw new Error('Invalid response format from server');
       }
-      
+
       return response.data;
     });
   }
@@ -132,7 +139,9 @@ class MealService {
     });
   }
 
-  async toggleFavorite(mealId: number): Promise<{ is_favorited: boolean; meal_id: number }> {
+  async toggleFavorite(
+    mealId: number
+  ): Promise<{ is_favorited: boolean; meal_id: number }> {
     return this.retryRequest(async () => {
       const response = await api.post(`/meals/${mealId}/favorite`);
       return response.data.data;

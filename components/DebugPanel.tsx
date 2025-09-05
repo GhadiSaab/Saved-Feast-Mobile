@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Colors } from '@/constants/Colors';
@@ -17,7 +23,7 @@ export const DebugPanel: React.FC<DebugPanelProps> = ({ visible, onClose }) => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { user, isAuthenticated, isLoading } = useAuth();
-  
+
   const [apiTestResult, setApiTestResult] = useState<string>('');
   const [userTestResult, setUserTestResult] = useState<string>('');
   const [tokenInfo, setTokenInfo] = useState<string>('');
@@ -25,14 +31,18 @@ export const DebugPanel: React.FC<DebugPanelProps> = ({ visible, onClose }) => {
   const testAPI = async () => {
     setApiTestResult('Testing...');
     const result = await testAPIConnection();
-    setApiTestResult(result ? '✅ API connection successful' : '❌ API connection failed');
+    setApiTestResult(
+      result ? '✅ API connection successful' : '❌ API connection failed'
+    );
   };
 
   const testUser = async () => {
     setUserTestResult('Testing...');
     const result = await testUserEndpoint();
     if (result) {
-      setUserTestResult(`✅ User endpoint working - ${result.first_name || 'Unknown'}`);
+      setUserTestResult(
+        `✅ User endpoint working - ${result.first_name || 'Unknown'}`
+      );
     } else {
       setUserTestResult('❌ User endpoint failed');
     }
@@ -42,7 +52,9 @@ export const DebugPanel: React.FC<DebugPanelProps> = ({ visible, onClose }) => {
     try {
       const token = await SecureStore.getItemAsync('auth_token');
       const userData = await SecureStore.getItemAsync('user_data');
-      setTokenInfo(`Token: ${token ? '✅ Present' : '❌ Missing'}\nUser Data: ${userData ? '✅ Present' : '❌ Missing'}`);
+      setTokenInfo(
+        `Token: ${token ? '✅ Present' : '❌ Missing'}\nUser Data: ${userData ? '✅ Present' : '❌ Missing'}`
+      );
     } catch (error) {
       setTokenInfo(`Error checking storage: ${error}`);
     }
@@ -51,19 +63,27 @@ export const DebugPanel: React.FC<DebugPanelProps> = ({ visible, onClose }) => {
   if (!visible) return null;
 
   return (
-    <View style={[styles.overlay, { backgroundColor: colors.background + 'F0' }]}>
+    <View
+      style={[styles.overlay, { backgroundColor: colors.background + 'F0' }]}
+    >
       <Card style={styles.panel}>
         <View style={styles.header}>
-          <Text style={[styles.title, { color: colors.text }]}>Debug Panel</Text>
+          <Text style={[styles.title, { color: colors.text }]}>
+            Debug Panel
+          </Text>
           <TouchableOpacity onPress={onClose}>
-            <Text style={[styles.closeButton, { color: colors.primary }]}>✕</Text>
+            <Text style={[styles.closeButton, { color: colors.primary }]}>
+              ✕
+            </Text>
           </TouchableOpacity>
         </View>
 
         <ScrollView style={styles.content}>
           {/* Auth State */}
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Auth State</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              Auth State
+            </Text>
             <Text style={[styles.info, { color: colors.text }]}>
               Authenticated: {isAuthenticated ? '✅ Yes' : '❌ No'}
             </Text>
@@ -77,19 +97,44 @@ export const DebugPanel: React.FC<DebugPanelProps> = ({ visible, onClose }) => {
 
           {/* API Tests */}
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>API Tests</Text>
-            <Button title="Test API Connection" onPress={testAPI} variant="outline" size="small" />
-            <Text style={[styles.result, { color: colors.text }]}>{apiTestResult}</Text>
-            
-            <Button title="Test User Endpoint" onPress={testUser} variant="outline" size="small" />
-            <Text style={[styles.result, { color: colors.text }]}>{userTestResult}</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              API Tests
+            </Text>
+            <Button
+              title="Test API Connection"
+              onPress={testAPI}
+              variant="outline"
+              size="small"
+            />
+            <Text style={[styles.result, { color: colors.text }]}>
+              {apiTestResult}
+            </Text>
+
+            <Button
+              title="Test User Endpoint"
+              onPress={testUser}
+              variant="outline"
+              size="small"
+            />
+            <Text style={[styles.result, { color: colors.text }]}>
+              {userTestResult}
+            </Text>
           </View>
 
           {/* Storage */}
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Storage</Text>
-            <Button title="Check Token & User Data" onPress={checkToken} variant="outline" size="small" />
-            <Text style={[styles.result, { color: colors.text }]}>{tokenInfo}</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              Storage
+            </Text>
+            <Button
+              title="Check Token & User Data"
+              onPress={checkToken}
+              variant="outline"
+              size="small"
+            />
+            <Text style={[styles.result, { color: colors.text }]}>
+              {tokenInfo}
+            </Text>
           </View>
         </ScrollView>
       </Card>

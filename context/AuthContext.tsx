@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 import authService, { User, LoginCredentials, RegisterData } from '../lib/auth';
 
 interface AuthContextType {
@@ -8,7 +14,7 @@ interface AuthContextType {
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (userData: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
-  refreshUser: () => Promise<void>;
+  refreshUser: () => Promise<User | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -103,17 +109,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         setIsLoading(true);
         console.log('Initializing auth...');
-        
+
         // Check if we have a token first
         const isAuth = await authService.isAuthenticated();
         console.log('Auth initialization - isAuthenticated:', isAuth);
-        
+
         if (isAuth) {
           // Try to get user data
           const userData = await refreshUser();
           if (!userData) {
             // If we can't get user data but have a token, clear everything
-            console.log('Token exists but user data failed to load, clearing auth');
+            console.log(
+              'Token exists but user data failed to load, clearing auth'
+            );
             await authService.logout();
             setUser(null);
           }
@@ -145,9 +153,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     refreshUser,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -33,7 +33,10 @@ export default function CheckoutScreen() {
 
   const handlePlaceOrder = async () => {
     if (cartItems.length === 0) {
-      Alert.alert('Empty Cart', 'Please add some items to your cart before checkout.');
+      Alert.alert(
+        'Empty Cart',
+        'Please add some items to your cart before checkout.'
+      );
       return;
     }
 
@@ -48,7 +51,7 @@ export default function CheckoutScreen() {
       };
 
       const order = await orderService.createOrder(orderData);
-      
+
       // Clear cart and redirect to order confirmation
       clearCart();
       router.replace(`/order-confirmation?orderId=${order.id}`);
@@ -70,18 +73,29 @@ export default function CheckoutScreen() {
             placeholder="🍽️"
           />
         ) : (
-          <View style={[styles.itemPlaceholder, { backgroundColor: colors.primary }]}>
+          <View
+            style={[
+              styles.itemPlaceholder,
+              { backgroundColor: colors.primary },
+            ]}
+          >
             <Ionicons name="restaurant" size={20} color="#FFFFFF" />
           </View>
         )}
       </View>
 
       <View style={styles.itemContent}>
-        <Text style={[styles.itemTitle, { color: colors.text }]} numberOfLines={2}>
+        <Text
+          style={[styles.itemTitle, { color: colors.text }]}
+          numberOfLines={2}
+        >
           {item.name}
         </Text>
         {item.restaurant && (
-          <Text style={[styles.itemRestaurant, { color: colors.text }]} numberOfLines={1}>
+          <Text
+            style={[styles.itemRestaurant, { color: colors.text }]}
+            numberOfLines={1}
+          >
             {item.restaurant}
           </Text>
         )}
@@ -99,7 +113,9 @@ export default function CheckoutScreen() {
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -110,16 +126,20 @@ export default function CheckoutScreen() {
         >
           {/* Header */}
           <View style={styles.header}>
-            <Text style={[styles.headerTitle, { color: colors.text }]}>Checkout</Text>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>
+              Checkout
+            </Text>
           </View>
 
           {/* Order Summary */}
           <Card style={styles.orderCard} elevation={3}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Order Summary</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              Order Summary
+            </Text>
             <FlatList
               data={cartItems}
               renderItem={renderOrderItem}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={item => item.id.toString()}
               scrollEnabled={false}
               showsVerticalScrollIndicator={false}
             />
@@ -127,7 +147,9 @@ export default function CheckoutScreen() {
 
           {/* Customer Info */}
           <Card style={styles.customerCard} elevation={3}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Customer Information</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              Customer Information
+            </Text>
             <View style={styles.customerInfo}>
               <View style={styles.infoRow}>
                 <Ionicons name="person-outline" size={20} color={colors.text} />
@@ -151,7 +173,11 @@ export default function CheckoutScreen() {
               )}
               {user?.address && (
                 <View style={styles.infoRow}>
-                  <Ionicons name="location-outline" size={20} color={colors.text} />
+                  <Ionicons
+                    name="location-outline"
+                    size={20}
+                    color={colors.text}
+                  />
                   <Text style={[styles.infoText, { color: colors.text }]}>
                     {user.address}
                   </Text>
@@ -162,9 +188,14 @@ export default function CheckoutScreen() {
 
           {/* Order Notes */}
           <Card style={styles.notesCard} elevation={3}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Order Notes (Optional)</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              Order Notes (Optional)
+            </Text>
             <TextInput
-              style={[styles.notesInput, { color: colors.text, borderColor: colors.border }]}
+              style={[
+                styles.notesInput,
+                { color: colors.text, borderColor: colors.border },
+              ]}
               placeholder="Any special instructions or requests..."
               placeholderTextColor={colors.text + '80'}
               value={notes}
@@ -178,18 +209,28 @@ export default function CheckoutScreen() {
           {/* Total */}
           <Card style={styles.totalCard} elevation={3}>
             <View style={styles.totalRow}>
-              <Text style={[styles.totalLabel, { color: colors.text }]}>Subtotal</Text>
+              <Text style={[styles.totalLabel, { color: colors.text }]}>
+                Subtotal
+              </Text>
               <Text style={[styles.totalAmount, { color: colors.text }]}>
                 €{getCartTotal().toFixed(2)}
               </Text>
             </View>
             <View style={styles.totalRow}>
-              <Text style={[styles.totalLabel, { color: colors.text }]}>Service Fee</Text>
-              <Text style={[styles.totalAmount, { color: colors.text }]}>€0.00</Text>
+              <Text style={[styles.totalLabel, { color: colors.text }]}>
+                Service Fee
+              </Text>
+              <Text style={[styles.totalAmount, { color: colors.text }]}>
+                €0.00
+              </Text>
             </View>
             <View style={[styles.totalRow, styles.finalTotal]}>
-              <Text style={[styles.finalTotalLabel, { color: colors.text }]}>Total</Text>
-              <Text style={[styles.finalTotalAmount, { color: colors.primary }]}>
+              <Text style={[styles.finalTotalLabel, { color: colors.text }]}>
+                Total
+              </Text>
+              <Text
+                style={[styles.finalTotalAmount, { color: colors.primary }]}
+              >
                 €{getCartTotal().toFixed(2)}
               </Text>
             </View>
@@ -197,7 +238,7 @@ export default function CheckoutScreen() {
 
           {/* Place Order Button */}
           <Button
-            title={isSubmitting ? "Placing Order..." : "Place Order"}
+            title={isSubmitting ? 'Placing Order...' : 'Place Order'}
             onPress={handlePlaceOrder}
             variant="primary"
             size="large"
@@ -209,7 +250,8 @@ export default function CheckoutScreen() {
           {/* Footer */}
           <View style={styles.footer}>
             <Text style={[styles.footerText, { color: colors.text }]}>
-              By placing this order, you agree to our Terms of Service and Privacy Policy
+              By placing this order, you agree to our Terms of Service and
+              Privacy Policy
             </Text>
           </View>
         </ScrollView>

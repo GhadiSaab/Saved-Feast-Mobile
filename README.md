@@ -21,30 +21,35 @@
 ## 🌟 Features
 
 ### 🍽️ **Meal Discovery & Ordering**
+
 - **Smart Meal Browsing**: Beautiful grid layout with advanced filtering
 - **Real-time Search**: Instant search with category and price filters
 - **Detailed Meal Views**: Rich meal information with pricing, descriptions, and pickup times
 - **Savings Calculator**: Clear display of savings percentages and restaurant details
 
 ### 🛒 **Advanced Shopping Cart**
+
 - **Intelligent Cart Management**: Add, remove, and update quantities seamlessly
 - **Real-time Totals**: Live calculation of cart totals and item counts
 - **Cart Persistence**: Items persist across app sessions
 - **Smooth Checkout**: Streamlined order completion process
 
 ### 🔐 **Enterprise-Grade Authentication**
+
 - **Secure Registration**: Robust user registration with validation
 - **Token-Based Auth**: Laravel Sanctum integration for secure sessions
 - **Profile Management**: Comprehensive user profile editing
 - **Session Management**: Automatic token refresh and session handling
 
 ### 📋 **Professional Order Management**
+
 - **Order Lifecycle**: Complete order tracking from placement to completion
 - **Status Updates**: Real-time order status (pending, confirmed, preparing, ready, completed, cancelled)
 - **Order History**: Detailed order history with search and filtering
 - **Order Actions**: Cancel pending orders with confirmation
 
 ### 🎨 **Premium UI/UX Design**
+
 - **Modern Design System**: Consistent, professional design language
 - **Dark/Light Themes**: Automatic theme switching with system preferences
 - **Smooth Animations**: Fluid transitions and micro-interactions
@@ -52,6 +57,7 @@
 - **Accessibility**: WCAG 2.1 compliant with screen reader support
 
 ### 🔧 **Technical Excellence**
+
 - **TypeScript**: Full type safety and IntelliSense support
 - **React Query**: Efficient data fetching with caching and synchronization
 - **Secure Storage**: Encrypted token storage with Expo SecureStore
@@ -73,31 +79,37 @@ The mobile application is developed as a separate repository with React Native a
 ## 🛠️ Technology Stack
 
 ### **Core Framework**
+
 - **React Native 0.79.6**: Latest stable version with new architecture
 - **Expo SDK 53**: Managed workflow with native module support
 - **TypeScript 5.8.3**: Full type safety and modern JavaScript features
 
 ### **Navigation & Routing**
+
 - **Expo Router 5.1.5**: File-based routing with type safety
 - **React Navigation 7**: Native navigation with gesture support
 
 ### **State Management & Data**
+
 - **TanStack Query 5.85.5**: Server state management with caching
 - **React Context API**: Client state management
 - **Axios 1.11.0**: HTTP client with interceptors
 
 ### **UI & Styling**
+
 - **Expo Vector Icons**: Comprehensive icon library
 - **Expo Linear Gradient**: Beautiful gradient effects
 - **React Native Reanimated**: Smooth animations
 - **Custom Design System**: Consistent component library
 
 ### **Security & Storage**
+
 - **Expo SecureStore**: Encrypted key-value storage
 - **Laravel Sanctum**: Token-based authentication
 - **Input Validation**: Comprehensive form validation
 
 ### **Development Tools**
+
 - **ESLint**: Code quality and consistency
 - **Jest**: Unit and integration testing
 - **TypeScript**: Static type checking
@@ -115,12 +127,14 @@ The mobile application is developed as a separate repository with React Native a
 ### **Installation**
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/savedfeast-mobile.git
    cd savedfeast-mobile
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    # or
@@ -128,15 +142,17 @@ The mobile application is developed as a separate repository with React Native a
    ```
 
 3. **Configure environment**
+
    ```bash
    # Copy environment template
    cp .env.example .env
-   
+
    # Update API URL in .env
    EXPO_PUBLIC_API_URL=http://your-api-domain.com/api
    ```
 
 4. **Start development server**
+
    ```bash
    npm start
    # or
@@ -204,23 +220,23 @@ The mobile app integrates seamlessly with the SavedFeast Laravel backend API.
 
 ### **Required API Endpoints**
 
-| Endpoint | Method | Description | Auth Required |
-|----------|--------|-------------|---------------|
-| `/api/login` | POST | User authentication | ❌ |
-| `/api/register` | POST | User registration | ❌ |
-| `/api/logout` | POST | User logout | ✅ |
-| `/api/meals` | GET | Fetch meals with filters | ❌ |
-| `/api/meals/filters` | GET | Get filter options | ❌ |
-| `/api/categories` | GET | Get meal categories | ❌ |
-| `/api/orders` | GET/POST | User orders | ✅ |
-| `/api/orders/{id}/cancel` | POST | Cancel order | ✅ |
-| `/api/user/profile` | POST | Update user profile | ✅ |
+| Endpoint                  | Method   | Description              | Auth Required |
+| ------------------------- | -------- | ------------------------ | ------------- |
+| `/api/login`              | POST     | User authentication      | ❌            |
+| `/api/register`           | POST     | User registration        | ❌            |
+| `/api/logout`             | POST     | User logout              | ✅            |
+| `/api/meals`              | GET      | Fetch meals with filters | ❌            |
+| `/api/meals/filters`      | GET      | Get filter options       | ❌            |
+| `/api/categories`         | GET      | Get meal categories      | ❌            |
+| `/api/orders`             | GET/POST | User orders              | ✅            |
+| `/api/orders/{id}/cancel` | POST     | Cancel order             | ✅            |
+| `/api/user/profile`       | POST     | Update user profile      | ✅            |
 
 ### **Authentication Flow**
 
 ```typescript
 // Automatic token handling in api.ts
-api.interceptors.request.use(async (config) => {
+api.interceptors.request.use(async config => {
   const token = await SecureStore.getItemAsync('auth_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -253,7 +269,8 @@ EXPO_PUBLIC_ENABLE_CRASH_REPORTING=false
 Update the API base URL in `lib/api.ts`:
 
 ```typescript
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL =
+  process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000/api';
 ```
 
 ## 🧪 Testing
@@ -300,25 +317,29 @@ tests/
 ### **Expo Application Services (EAS)**
 
 1. **Install EAS CLI**
+
    ```bash
    npm install -g @expo/eas-cli
    ```
 
 2. **Login to Expo**
+
    ```bash
    eas login
    ```
 
 3. **Configure EAS**
+
    ```bash
    eas build:configure
    ```
 
 4. **Build for production**
+
    ```bash
    # Build for all platforms
    npm run build:all
-   
+
    # Build for specific platform
    npm run build:android
    npm run build:ios
@@ -431,6 +452,7 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) speci
 ### **Common Issues**
 
 #### **Metro Bundler Issues**
+
 ```bash
 # Clear Metro cache
 npm run clean
@@ -440,6 +462,7 @@ expo start --clear
 ```
 
 #### **iOS Simulator Issues**
+
 ```bash
 # Reset iOS simulator
 xcrun simctl erase all
@@ -449,6 +472,7 @@ npx expo run:ios --simulator="iPhone 15 Pro"
 ```
 
 #### **Android Emulator Issues**
+
 ```bash
 # Reset Android emulator
 adb emu kill
@@ -459,6 +483,7 @@ npx expo run:android --device
 ```
 
 #### **API Connection Issues**
+
 - Verify API URL in `lib/api.ts`
 - Check if backend server is running
 - Ensure CORS is properly configured

@@ -32,10 +32,17 @@ export default function SignupScreen() {
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
+  const [showPasswordConfirmation, setShowPasswordConfirmation] =
+    useState(false);
 
   const handleSignup = async () => {
-    if (!firstName.trim() || !lastName.trim() || !email.trim() || !password.trim() || !passwordConfirmation.trim()) {
+    if (
+      !firstName.trim() ||
+      !lastName.trim() ||
+      !email.trim() ||
+      !password.trim() ||
+      !passwordConfirmation.trim()
+    ) {
       Alert.alert('Error', 'Please fill in all required fields');
       return;
     }
@@ -62,7 +69,10 @@ export default function SignupScreen() {
       });
       router.replace('/');
     } catch (error: any) {
-      Alert.alert('Signup Failed', error.message || 'Please check your information and try again');
+      Alert.alert(
+        'Signup Failed',
+        error.message || 'Please check your information and try again'
+      );
     }
   };
 
@@ -71,7 +81,9 @@ export default function SignupScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -92,10 +104,17 @@ export default function SignupScreen() {
 
           {/* Logo and Title */}
           <View style={styles.logoSection}>
-            <View style={[styles.logoContainer, { backgroundColor: colors.primary }]}>
+            <View
+              style={[
+                styles.logoContainer,
+                { backgroundColor: colors.primary },
+              ]}
+            >
               <Ionicons name="leaf" size={48} color="#FFFFFF" />
             </View>
-            <Text style={[styles.title, { color: colors.text }]}>Join SavedFeast</Text>
+            <Text style={[styles.title, { color: colors.text }]}>
+              Join SavedFeast
+            </Text>
             <Text style={[styles.subtitle, { color: colors.text }]}>
               Create your account to start saving food and money
             </Text>
@@ -106,7 +125,12 @@ export default function SignupScreen() {
             {/* Name Fields */}
             <View style={styles.nameRow}>
               <View style={[styles.inputContainer, styles.halfWidth]}>
-                <Ionicons name="person-outline" size={20} color={colors.text} style={styles.inputIcon} />
+                <Ionicons
+                  name="person-outline"
+                  size={20}
+                  color={colors.text}
+                  style={styles.inputIcon}
+                />
                 <TextInput
                   style={[styles.input, { color: colors.text }]}
                   placeholder="First name"
@@ -118,7 +142,12 @@ export default function SignupScreen() {
                 />
               </View>
               <View style={[styles.inputContainer, styles.halfWidth]}>
-                <Ionicons name="person-outline" size={20} color={colors.text} style={styles.inputIcon} />
+                <Ionicons
+                  name="person-outline"
+                  size={20}
+                  color={colors.text}
+                  style={styles.inputIcon}
+                />
                 <TextInput
                   style={[styles.input, { color: colors.text }]}
                   placeholder="Last name"
@@ -133,7 +162,12 @@ export default function SignupScreen() {
 
             {/* Email */}
             <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color={colors.text} style={styles.inputIcon} />
+              <Ionicons
+                name="mail-outline"
+                size={20}
+                color={colors.text}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={[styles.input, { color: colors.text }]}
                 placeholder="Email address"
@@ -148,7 +182,12 @@ export default function SignupScreen() {
 
             {/* Phone */}
             <View style={styles.inputContainer}>
-              <Ionicons name="call-outline" size={20} color={colors.text} style={styles.inputIcon} />
+              <Ionicons
+                name="call-outline"
+                size={20}
+                color={colors.text}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={[styles.input, { color: colors.text }]}
                 placeholder="Phone number (optional)"
@@ -162,7 +201,12 @@ export default function SignupScreen() {
 
             {/* Address */}
             <View style={styles.inputContainer}>
-              <Ionicons name="location-outline" size={20} color={colors.text} style={styles.inputIcon} />
+              <Ionicons
+                name="location-outline"
+                size={20}
+                color={colors.text}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={[styles.input, { color: colors.text }]}
                 placeholder="Address (optional)"
@@ -176,7 +220,12 @@ export default function SignupScreen() {
 
             {/* Password */}
             <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color={colors.text} style={styles.inputIcon} />
+              <Ionicons
+                name="lock-closed-outline"
+                size={20}
+                color={colors.text}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={[styles.input, { color: colors.text }]}
                 placeholder="Password"
@@ -201,7 +250,12 @@ export default function SignupScreen() {
 
             {/* Password Confirmation */}
             <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color={colors.text} style={styles.inputIcon} />
+              <Ionicons
+                name="lock-closed-outline"
+                size={20}
+                color={colors.text}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={[styles.input, { color: colors.text }]}
                 placeholder="Confirm password"
@@ -214,10 +268,14 @@ export default function SignupScreen() {
               />
               <TouchableOpacity
                 style={styles.passwordToggle}
-                onPress={() => setShowPasswordConfirmation(!showPasswordConfirmation)}
+                onPress={() =>
+                  setShowPasswordConfirmation(!showPasswordConfirmation)
+                }
               >
                 <Ionicons
-                  name={showPasswordConfirmation ? 'eye-off-outline' : 'eye-outline'}
+                  name={
+                    showPasswordConfirmation ? 'eye-off-outline' : 'eye-outline'
+                  }
                   size={20}
                   color={colors.text}
                 />
@@ -249,7 +307,8 @@ export default function SignupScreen() {
           {/* Footer */}
           <View style={styles.footer}>
             <Text style={[styles.footerText, { color: colors.text }]}>
-              By creating an account, you agree to our Terms of Service and Privacy Policy
+              By creating an account, you agree to our Terms of Service and
+              Privacy Policy
             </Text>
           </View>
         </ScrollView>

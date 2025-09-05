@@ -17,15 +17,18 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  const containerStyle = fullScreen ? styles.fullScreenContainer : styles.container;
+  const containerStyle = fullScreen
+    ? styles.fullScreenContainer
+    : styles.container;
 
   return (
-    <View style={[containerStyle, { backgroundColor: colors.background }]}>
+    <View
+      testID="loading-spinner"
+      style={[containerStyle, { backgroundColor: colors.background }]}
+    >
       <ActivityIndicator size={size} color={colors.primary} />
       {message && (
-        <Text style={[styles.message, { color: colors.text }]}>
-          {message}
-        </Text>
+        <Text style={[styles.message, { color: colors.text }]}>{message}</Text>
       )}
     </View>
   );

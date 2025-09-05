@@ -10,15 +10,14 @@ import { Card } from '@/components/ui/Card';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useAuth } from '@/context/AuthContext';
-import { Order, OrderItem } from '@/lib/orders';
-import orderService from '@/lib/orders';
+import { Order, OrderItem, default as orderService } from '@/lib/orders';
 
 export default function OrderConfirmationScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-  const { isAuthenticated } = useAuth();
+  const {} = useAuth();
   const params = useLocalSearchParams();
-  
+
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [orderStatus, setOrderStatus] = useState<string>('pending');
@@ -46,51 +45,72 @@ export default function OrderConfirmationScreen() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return '#FFA500';
-      case 'confirmed': return '#007AFF';
-      case 'preparing': return '#FF9500';
-      case 'ready': return '#34C759';
-      case 'completed': return '#34C759';
-      case 'cancelled': return '#FF3B30';
-      default: return colors.text;
+      case 'pending':
+        return '#FFA500';
+      case 'confirmed':
+        return '#007AFF';
+      case 'preparing':
+        return '#FF9500';
+      case 'ready':
+        return '#34C759';
+      case 'completed':
+        return '#34C759';
+      case 'cancelled':
+        return '#FF3B30';
+      default:
+        return colors.text;
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'pending': return 'time-outline';
-      case 'confirmed': return 'checkmark-circle-outline';
-      case 'preparing': return 'restaurant-outline';
-      case 'ready': return 'checkmark-done-circle-outline';
-      case 'completed': return 'checkmark-circle';
-      case 'cancelled': return 'close-circle-outline';
-      default: return 'help-circle-outline';
+      case 'pending':
+        return 'time-outline';
+      case 'confirmed':
+        return 'checkmark-circle-outline';
+      case 'preparing':
+        return 'restaurant-outline';
+      case 'ready':
+        return 'checkmark-done-circle-outline';
+      case 'completed':
+        return 'checkmark-circle';
+      case 'cancelled':
+        return 'close-circle-outline';
+      default:
+        return 'help-circle-outline';
     }
   };
 
   const getStatusDescription = (status: string) => {
     switch (status) {
-      case 'pending': return 'Your order has been received and is being processed';
-      case 'confirmed': return 'Your order has been confirmed by the restaurant';
-      case 'preparing': return 'Your meal is being prepared by the restaurant';
-      case 'ready': return 'Your order is ready for pickup!';
-      case 'completed': return 'Order completed successfully';
-      case 'cancelled': return 'Order has been cancelled';
-      default: return 'Order status unknown';
+      case 'pending':
+        return 'Your order has been received and is being processed';
+      case 'confirmed':
+        return 'Your order has been confirmed by the restaurant';
+      case 'preparing':
+        return 'Your meal is being prepared by the restaurant';
+      case 'ready':
+        return 'Your order is ready for pickup!';
+      case 'completed':
+        return 'Order completed successfully';
+      case 'cancelled':
+        return 'Order has been cancelled';
+      default:
+        return 'Order status unknown';
     }
   };
 
   const formatPickupTime = (pickupTime: string) => {
     const date = new Date(pickupTime);
-    return date.toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
   const handleTrackOrder = () => {
     if (order) {
-      router.push(`/orders/${order.id}`);
+      router.push('/orders');
     }
   };
 
@@ -104,10 +124,14 @@ export default function OrderConfirmationScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <ThemedView style={styles.loadingContainer}>
           <Ionicons name="restaurant" size={48} color={colors.primary} />
-          <ThemedText style={styles.loadingText}>Loading order details...</ThemedText>
+          <ThemedText style={styles.loadingText}>
+            Loading order details...
+          </ThemedText>
         </ThemedView>
       </SafeAreaView>
     );
@@ -115,12 +139,19 @@ export default function OrderConfirmationScreen() {
 
   if (!order) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <ThemedView style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={colors.primary} />
+          <Ionicons
+            name="alert-circle-outline"
+            size={48}
+            color={colors.primary}
+          />
           <ThemedText style={styles.errorTitle}>Order Not Found</ThemedText>
           <ThemedText style={styles.errorText}>
-            We couldn't find the order details. Please check your order history.
+            We couldn&apos;t find the order details. Please check your order
+            history.
           </ThemedText>
           <Button
             title="View Orders"
@@ -135,15 +166,19 @@ export default function OrderConfirmationScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView 
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
+      <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
         {/* Success Header */}
         <ThemedView style={styles.header}>
-          <View style={[styles.successIcon, { backgroundColor: colors.primary }]}>
+          <View
+            style={[styles.successIcon, { backgroundColor: colors.primary }]}
+          >
             <Ionicons name="checkmark" size={32} color="#FFFFFF" />
           </View>
           <ThemedText style={styles.title}>Order Confirmed!</ThemedText>
@@ -155,12 +190,17 @@ export default function OrderConfirmationScreen() {
         {/* Order Status */}
         <Card style={styles.statusCard} elevation={3}>
           <View style={styles.statusHeader}>
-            <Ionicons 
-              name={getStatusIcon(orderStatus) as any} 
-              size={24} 
-              color={getStatusColor(orderStatus)} 
+            <Ionicons
+              name={getStatusIcon(orderStatus) as any}
+              size={24}
+              color={getStatusColor(orderStatus)}
             />
-            <ThemedText style={[styles.statusText, { color: getStatusColor(orderStatus) }]}>
+            <ThemedText
+              style={[
+                styles.statusText,
+                { color: getStatusColor(orderStatus) },
+              ]}
+            >
               {orderStatus.charAt(0).toUpperCase() + orderStatus.slice(1)}
             </ThemedText>
           </View>
@@ -172,7 +212,7 @@ export default function OrderConfirmationScreen() {
         {/* Order Details */}
         <Card style={styles.orderCard} elevation={3}>
           <ThemedText style={styles.sectionTitle}>Order Details</ThemedText>
-          
+
           <View style={styles.orderInfo}>
             <View style={styles.infoRow}>
               <ThemedText style={styles.infoLabel}>Order ID:</ThemedText>
@@ -186,7 +226,12 @@ export default function OrderConfirmationScreen() {
             </View>
             <View style={styles.infoRow}>
               <ThemedText style={styles.infoLabel}>Total Amount:</ThemedText>
-              <ThemedText style={[styles.infoValue, { color: colors.primary, fontWeight: 'bold' }]}>
+              <ThemedText
+                style={[
+                  styles.infoValue,
+                  { color: colors.primary, fontWeight: 'bold' },
+                ]}
+              >
                 €{order.total_amount.toFixed(2)}
               </ThemedText>
             </View>
@@ -197,32 +242,47 @@ export default function OrderConfirmationScreen() {
           {order.items.map((item: OrderItem, index: number) => (
             <View key={index} style={styles.orderItem}>
               <View style={styles.itemInfo}>
-                <ThemedText style={styles.itemName}>{item.meal.title}</ThemedText>
-                <ThemedText style={styles.itemQuantity}>x{item.quantity}</ThemedText>
+                <ThemedText style={styles.itemName}>
+                  {item.meal.title}
+                </ThemedText>
+                <ThemedText style={styles.itemQuantity}>
+                  x{item.quantity}
+                </ThemedText>
               </View>
-              <ThemedText style={styles.itemPrice}>€{(item.price * item.quantity).toFixed(2)}</ThemedText>
+              <ThemedText style={styles.itemPrice}>
+                €{(item.price * item.quantity).toFixed(2)}
+              </ThemedText>
             </View>
           ))}
         </Card>
 
         {/* What Happens Next */}
         <Card style={styles.nextStepsCard} elevation={3}>
-          <ThemedText style={styles.sectionTitle}>What Happens Next?</ThemedText>
-          
+          <ThemedText style={styles.sectionTitle}>
+            What Happens Next?
+          </ThemedText>
+
           <View style={styles.step}>
-            <View style={[styles.stepIcon, { backgroundColor: colors.primary }]}>
+            <View
+              style={[styles.stepIcon, { backgroundColor: colors.primary }]}
+            >
               <ThemedText style={styles.stepNumber}>1</ThemedText>
             </View>
             <View style={styles.stepContent}>
-              <ThemedText style={styles.stepTitle}>Restaurant Notification</ThemedText>
+              <ThemedText style={styles.stepTitle}>
+                Restaurant Notification
+              </ThemedText>
               <ThemedText style={styles.stepDescription}>
-                The restaurant has been notified of your order and will begin preparation.
+                The restaurant has been notified of your order and will begin
+                preparation.
               </ThemedText>
             </View>
           </View>
 
           <View style={styles.step}>
-            <View style={[styles.stepIcon, { backgroundColor: colors.primary }]}>
+            <View
+              style={[styles.stepIcon, { backgroundColor: colors.primary }]}
+            >
               <ThemedText style={styles.stepNumber}>2</ThemedText>
             </View>
             <View style={styles.stepContent}>
@@ -234,13 +294,16 @@ export default function OrderConfirmationScreen() {
           </View>
 
           <View style={styles.step}>
-            <View style={[styles.stepIcon, { backgroundColor: colors.primary }]}>
+            <View
+              style={[styles.stepIcon, { backgroundColor: colors.primary }]}
+            >
               <ThemedText style={styles.stepNumber}>3</ThemedText>
             </View>
             <View style={styles.stepContent}>
               <ThemedText style={styles.stepTitle}>Ready for Pickup</ThemedText>
               <ThemedText style={styles.stepDescription}>
-                You'll receive a notification when your order is ready for pickup.
+                You&apos;ll receive a notification when your order is ready for
+                pickup.
               </ThemedText>
             </View>
           </View>

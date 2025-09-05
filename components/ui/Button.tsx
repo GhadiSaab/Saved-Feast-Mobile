@@ -1,5 +1,12 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle, TextStyle } from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ViewStyle,
+  TextStyle,
+} from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -32,9 +39,14 @@ export const Button: React.FC<ButtonProps> = ({
     styles[size],
     styles[variant],
     {
-      backgroundColor: variant === 'primary' ? colors.primary : 
-                      variant === 'secondary' ? colors.secondary :
-                      variant === 'outline' ? 'transparent' : 'transparent',
+      backgroundColor:
+        variant === 'primary'
+          ? colors.primary
+          : variant === 'secondary'
+            ? colors.secondary
+            : variant === 'outline'
+              ? 'transparent'
+              : 'transparent',
       borderColor: variant === 'outline' ? colors.primary : 'transparent',
     },
     disabled && styles.disabled,
@@ -45,10 +57,14 @@ export const Button: React.FC<ButtonProps> = ({
     styles.text,
     styles[`${size}Text`],
     {
-      color: variant === 'primary' ? '#FFFFFF' :
-             variant === 'secondary' ? '#FFFFFF' :
-             variant === 'outline' ? colors.primary :
-             colors.primary,
+      color:
+        variant === 'primary'
+          ? '#FFFFFF'
+          : variant === 'secondary'
+            ? '#FFFFFF'
+            : variant === 'outline'
+              ? colors.primary
+              : colors.primary,
     },
     disabled && styles.disabledText,
     textStyle,
@@ -62,9 +78,14 @@ export const Button: React.FC<ButtonProps> = ({
       activeOpacity={0.8}
     >
       {loading ? (
-        <ActivityIndicator 
-          color={variant === 'primary' || variant === 'secondary' ? '#FFFFFF' : colors.primary} 
-          size="small" 
+        <ActivityIndicator
+          testID="button-loading"
+          color={
+            variant === 'primary' || variant === 'secondary'
+              ? '#FFFFFF'
+              : colors.primary
+          }
+          size="small"
         />
       ) : (
         <Text style={textStyles}>{title}</Text>

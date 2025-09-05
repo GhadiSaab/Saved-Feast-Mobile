@@ -36,9 +36,12 @@ export interface AuthResponse {
 }
 
 class AuthService {
-  private async retryRequest<T>(requestFn: () => Promise<T>, maxRetries: number = 3): Promise<T> {
+  private async retryRequest<T>(
+    requestFn: () => Promise<T>,
+    maxRetries: number = 3
+  ): Promise<T> {
     let lastError: any;
-    
+
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         console.log(`Auth attempt ${attempt}/${maxRetries}`);
@@ -46,12 +49,16 @@ class AuthService {
       } catch (error: any) {
         lastError = error;
         console.log(`Auth attempt ${attempt} failed:`, error.message);
-        
+
         // Don't retry on authentication errors or client errors
-        if (error.response?.status === 401 || error.response?.status === 403 || error.response?.status === 404) {
+        if (
+          error.response?.status === 401 ||
+          error.response?.status === 403 ||
+          error.response?.status === 404
+        ) {
           throw error;
         }
-        
+
         // Wait before retrying (exponential backoff)
         if (attempt < maxRetries) {
           const delay = Math.min(Math.pow(2, attempt) * 2000, 10000); // Max 10 seconds delay
@@ -60,7 +67,7 @@ class AuthService {
         }
       }
     }
-    
+
     console.error('All auth retry attempts failed:', lastError);
     throw lastError;
   }
@@ -69,11 +76,11 @@ class AuthService {
     return this.retryRequest(async () => {
       const response = await api.post('/login', credentials);
       const { user, access_token } = response.data;
-      
+
       // Store token and user data securely
       await SecureStore.setItemAsync('auth_token', access_token);
       await SecureStore.setItemAsync('user_data', JSON.stringify(user));
-      
+
       return { user, token: access_token };
     });
   }
@@ -82,11 +89,11 @@ class AuthService {
     return this.retryRequest(async () => {
       const response = await api.post('/register', userData);
       const { user, access_token } = response.data;
-      
+
       // Store token and user data securely
       await SecureStore.setItemAsync('auth_token', access_token);
       await SecureStore.setItemAsync('user_data', JSON.stringify(user));
-      
+
       return { user, token: access_token };
     });
   }
@@ -94,14 +101,11 @@ class AuthService {
   async logout(): Promise<void> {
     try {
       // Try to call logout API with a timeout
-      const timeoutPromise = new Promise((_, reject) => 
+      const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Logout timeout')), 5000)
       );
-      
-      await Promise.race([
-        api.post('/logout'),
-        timeoutPromise
-      ]);
+
+      await Promise.race([api.post('/logout'), timeoutPromise]);
     } catch (error) {
       // Even if logout API fails, clear local storage
       console.warn('Logout API failed, but clearing local storage:', error);
@@ -116,42 +120,48 @@ class AuthService {
     try {
       const token = await SecureStore.getItemAsync('auth_token');
       console.log('getCurrentUser - token exists:', !!token);
-      
+
       if (!token) {
         return null;
       }
 
       // Try to get fresh user data from API with timeout
       try {
-        const timeoutPromise = new Promise((_, reject) => 
+        const timeoutPromise = new Promise((_, reject) =>
           setTimeout(() => reject(new Error('API timeout')), 10000)
         );
-        
+
         const apiPromise = api.get('/user');
-        const response = await Promise.race([apiPromise, timeoutPromise]) as any;
+        const response = (await Promise.race([
+          apiPromise,
+          timeoutPromise,
+        ])) as any;
         const user = response.data;
-        
+
         console.log('getCurrentUser - API response received');
-        
+
         // Update stored user data
         await SecureStore.setItemAsync('user_data', JSON.stringify(user));
-        
+
         return user;
       } catch (apiError: any) {
         console.error('API error getting current user:', apiError);
-        
+
         // If API call fails, try to get cached user data
         try {
           const userData = await SecureStore.getItemAsync('user_data');
           if (userData) {
             const cachedUser = JSON.parse(userData);
             console.log('getCurrentUser - using cached data:', !!cachedUser);
-            
+
             // If it's a network error, return cached data
-            if (apiError.message.includes('Network error') || apiError.message.includes('timeout')) {
+            if (
+              apiError.message.includes('Network error') ||
+              apiError.message.includes('timeout')
+            ) {
               return cachedUser;
             }
-            
+
             // If it's an auth error (401), clear everything
             if (apiError.response?.status === 401) {
               console.log('Auth error, clearing stored data');
@@ -159,7 +169,7 @@ class AuthService {
               await SecureStore.deleteItemAsync('user_data');
               return null;
             }
-            
+
             // For other errors, return cached data
             return cachedUser;
           }
@@ -193,13 +203,13 @@ class AuthService {
         email: profileData.email,
         // Add other fields if needed
       };
-      
+
       const response = await api.post('/user/profile', apiData);
       const updatedUser = response.data.user;
-      
+
       // Update stored user data
       await SecureStore.setItemAsync('user_data', JSON.stringify(updatedUser));
-      
+
       return updatedUser;
     });
   }
@@ -217,15 +227,15 @@ class AuthService {
   // Test function to check API connection
   async testConnection(): Promise<boolean> {
     try {
-      const timeoutPromise = new Promise((_, reject) => 
+      const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Connection timeout')), 5000)
       );
-      
-      const response = await Promise.race([
+
+      const response = (await Promise.race([
         api.get('/'),
-        timeoutPromise
-      ]) as any;
-      
+        timeoutPromise,
+      ])) as any;
+
       console.log('API connection test successful:', response.data);
       return true;
     } catch (error: any) {

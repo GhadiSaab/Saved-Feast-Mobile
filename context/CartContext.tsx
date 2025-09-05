@@ -11,7 +11,13 @@ export interface CartItem {
 
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (meal: { id: number; name: string; price: number; image?: string; restaurant?: string }) => void;
+  addToCart: (meal: {
+    id: number;
+    name: string;
+    price: number;
+    image?: string;
+    restaurant?: string;
+  }) => void;
   removeFromCart: (mealId: number) => void;
   updateQuantity: (mealId: number, quantity: number) => void;
   clearCart: () => void;
@@ -36,7 +42,13 @@ interface CartProviderProps {
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  const addToCart = (meal: { id: number; name: string; price: number; image?: string; restaurant?: string }) => {
+  const addToCart = (meal: {
+    id: number;
+    name: string;
+    price: number;
+    image?: string;
+    restaurant?: string;
+  }) => {
     setCartItems(prevItems => {
       const existingItem = prevItems.find(item => item.id === meal.id);
       if (existingItem) {
@@ -70,7 +82,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   const getCartTotal = (): number => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
   };
 
   const getItemCount = (): number => {
@@ -88,8 +103,6 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={contextValue}>
-      {children}
-    </CartContext.Provider>
+    <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>
   );
 };

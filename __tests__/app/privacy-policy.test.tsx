@@ -15,20 +15,20 @@ jest.mock('react-native', () => ({
   Text: 'Text',
   ScrollView: 'ScrollView',
   StyleSheet: {
-    create: jest.fn((styles) => styles),
+    create: jest.fn(styles => styles),
   },
 }));
 
 describe('PrivacyPolicyScreen', () => {
   it('should render privacy policy content', () => {
     const { getByText } = render(<PrivacyPolicyScreen />);
-    
+
     expect(getByText('Privacy Policy')).toBeTruthy();
   });
 
   it('should render last updated date', () => {
     const { getByText } = render(<PrivacyPolicyScreen />);
-    
+
     expect(getByText(/Last updated:/)).toBeTruthy();
   });
 });

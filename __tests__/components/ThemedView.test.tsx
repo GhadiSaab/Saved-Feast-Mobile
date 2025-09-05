@@ -6,7 +6,7 @@ import { ThemedView } from '../../components/ThemedView';
 jest.mock('react-native', () => ({
   View: 'View',
   StyleSheet: {
-    create: jest.fn((styles) => styles),
+    create: jest.fn(styles => styles),
   },
 }));
 
@@ -17,7 +17,7 @@ describe('ThemedView', () => {
         <div>Test content</div>
       </ThemedView>
     );
-    
+
     expect(getByText('Test content')).toBeTruthy();
   });
 
@@ -28,7 +28,7 @@ describe('ThemedView', () => {
         <div>Test content</div>
       </ThemedView>
     );
-    
+
     expect(getByTestId('themed-view')).toBeTruthy();
   });
 });

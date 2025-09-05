@@ -26,7 +26,7 @@ export default function OrdersScreen() {
 
   const {
     data: ordersData,
-    isLoading,
+    isLoading: _,
     error,
     refetch,
     isRefetching,
@@ -86,33 +86,31 @@ export default function OrdersScreen() {
   };
 
   const handleCancelOrder = async (orderId: number) => {
-    Alert.alert(
-      'Cancel Order',
-      'Are you sure you want to cancel this order?',
-      [
-        { text: 'No', style: 'cancel' },
-        {
-          text: 'Yes, Cancel',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await orderService.cancelOrder(orderId);
-              refetch();
-              Alert.alert('Success', 'Order cancelled successfully');
-            } catch (error: any) {
-              Alert.alert('Error', error.message || 'Failed to cancel order');
-            }
-          },
+    Alert.alert('Cancel Order', 'Are you sure you want to cancel this order?', [
+      { text: 'No', style: 'cancel' },
+      {
+        text: 'Yes, Cancel',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await orderService.cancelOrder(orderId);
+            refetch();
+            Alert.alert('Success', 'Order cancelled successfully');
+          } catch (error: any) {
+            Alert.alert('Error', error.message || 'Failed to cancel order');
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const renderOrderItem = ({ item }: { item: any }) => (
     <Card style={styles.orderCard} elevation={2}>
       <TouchableOpacity
         style={styles.orderHeader}
-        onPress={() => setSelectedOrder(selectedOrder?.id === item.id ? null : item)}
+        onPress={() =>
+          setSelectedOrder(selectedOrder?.id === item.id ? null : item)
+        }
       >
         <View style={styles.orderInfo}>
           <Text style={[styles.orderNumber, { color: colors.text }]}>
@@ -122,11 +120,25 @@ export default function OrdersScreen() {
             {formatDate(item.created_at)}
           </Text>
         </View>
-        
+
         <View style={styles.orderStatus}>
-          <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
-            <Ionicons name={getStatusIcon(item.status)} size={16} color={getStatusColor(item.status)} />
-            <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
+          <View
+            style={[
+              styles.statusBadge,
+              { backgroundColor: getStatusColor(item.status) + '20' },
+            ]}
+          >
+            <Ionicons
+              name={getStatusIcon(item.status)}
+              size={16}
+              color={getStatusColor(item.status)}
+            />
+            <Text
+              style={[
+                styles.statusText,
+                { color: getStatusColor(item.status) },
+              ]}
+            >
               {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
             </Text>
           </View>
@@ -151,7 +163,9 @@ export default function OrdersScreen() {
       {selectedOrder?.id === item.id && (
         <View style={styles.orderDetails}>
           <View style={styles.detailsHeader}>
-            <Text style={[styles.detailsTitle, { color: colors.text }]}>Order Details</Text>
+            <Text style={[styles.detailsTitle, { color: colors.text }]}>
+              Order Details
+            </Text>
           </View>
 
           {/* Order Items */}
@@ -166,18 +180,29 @@ export default function OrdersScreen() {
                     placeholder="🍽️"
                   />
                 ) : (
-                  <View style={[styles.itemPlaceholder, { backgroundColor: colors.primary }]}>
+                  <View
+                    style={[
+                      styles.itemPlaceholder,
+                      { backgroundColor: colors.primary },
+                    ]}
+                  >
                     <Ionicons name="restaurant" size={16} color="#FFFFFF" />
                   </View>
                 )}
               </View>
 
               <View style={styles.itemContent}>
-                <Text style={[styles.itemTitle, { color: colors.text }]} numberOfLines={2}>
+                <Text
+                  style={[styles.itemTitle, { color: colors.text }]}
+                  numberOfLines={2}
+                >
                   {orderItem.meal.title}
                 </Text>
                 {orderItem.meal.restaurant && (
-                  <Text style={[styles.itemRestaurant, { color: colors.text }]} numberOfLines={1}>
+                  <Text
+                    style={[styles.itemRestaurant, { color: colors.text }]}
+                    numberOfLines={1}
+                  >
                     {orderItem.meal.restaurant.name}
                   </Text>
                 )}
@@ -195,8 +220,12 @@ export default function OrdersScreen() {
           {/* Order Notes */}
           {item.notes && (
             <View style={styles.notesSection}>
-              <Text style={[styles.notesLabel, { color: colors.text }]}>Notes:</Text>
-              <Text style={[styles.notesText, { color: colors.text }]}>{item.notes}</Text>
+              <Text style={[styles.notesLabel, { color: colors.text }]}>
+                Notes:
+              </Text>
+              <Text style={[styles.notesText, { color: colors.text }]}>
+                {item.notes}
+              </Text>
             </View>
           )}
 
@@ -220,7 +249,9 @@ export default function OrdersScreen() {
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Ionicons name="receipt-outline" size={80} color={colors.text + '40'} />
-      <Text style={[styles.emptyTitle, { color: colors.text }]}>No orders yet</Text>
+      <Text style={[styles.emptyTitle, { color: colors.text }]}>
+        No orders yet
+      </Text>
       <Text style={[styles.emptySubtitle, { color: colors.text }]}>
         Start ordering delicious meals to see your order history here
       </Text>
@@ -235,10 +266,18 @@ export default function OrdersScreen() {
 
   if (error) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={64} color={colors.error} />
-          <Text style={[styles.errorTitle, { color: colors.text }]}>Something went wrong</Text>
+          <Ionicons
+            name="alert-circle-outline"
+            size={64}
+            color={colors.error}
+          />
+          <Text style={[styles.errorTitle, { color: colors.text }]}>
+            Something went wrong
+          </Text>
           <Text style={[styles.errorMessage, { color: colors.text }]}>
             {error.message || 'Failed to load orders'}
           </Text>
@@ -254,10 +293,14 @@ export default function OrdersScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
       <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>My Orders</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>
+          My Orders
+        </Text>
       </View>
 
       {/* Orders List */}
@@ -265,7 +308,7 @@ export default function OrdersScreen() {
         <FlatList
           data={ordersData.data}
           renderItem={renderOrderItem}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={item => item.id.toString()}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.listContent}
           refreshControl={

@@ -8,8 +8,8 @@ interface LoadingScreenProps {
   message?: string;
 }
 
-export const LoadingScreen: React.FC<LoadingScreenProps> = ({ 
-  message = 'Loading...' 
+export const LoadingScreen: React.FC<LoadingScreenProps> = ({
+  message = 'Loading...',
 }) => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -17,7 +17,9 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
-        <View style={[styles.iconContainer, { backgroundColor: colors.primary }]}>
+        <View
+          style={[styles.iconContainer, { backgroundColor: colors.primary }]}
+        >
           <Ionicons name="leaf" size={48} color="#FFFFFF" />
         </View>
         <Text style={[styles.title, { color: colors.text }]}>SavedFeast</Text>

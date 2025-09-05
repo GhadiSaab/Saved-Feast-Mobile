@@ -16,7 +16,7 @@ describe('Colors', () => {
   it('should have consistent color structure', () => {
     const lightKeys = Object.keys(Colors.light);
     const darkKeys = Object.keys(Colors.dark);
-    
+
     expect(lightKeys).toEqual(darkKeys);
   });
 });

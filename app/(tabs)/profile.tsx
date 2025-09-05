@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -10,12 +17,11 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { useAuth } from '@/context/AuthContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 
-
 export default function ProfileTabScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { user, isAuthenticated, isLoading, logout } = useAuth();
-  
+
   // Settings state - these will be used in future settings implementation
   // const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   // const [emailNotifications, setEmailNotifications] = useState(true);
@@ -23,26 +29,22 @@ export default function ProfileTabScreen() {
   // const [darkModeEnabled, setDarkModeEnabled] = useState(colorScheme === 'dark');
 
   const handleLogout = async () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await logout();
-              router.replace('/(auth)/login');
-            } catch (error) {
-              console.error('Logout error:', error);
-              router.replace('/(auth)/login');
-            }
-          },
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await logout();
+            router.replace('/(auth)/login');
+          } catch (error) {
+            console.error('Logout error:', error);
+            router.replace('/(auth)/login');
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleFavorites = () => {
@@ -71,10 +73,13 @@ export default function ProfileTabScreen() {
       'Need help? Contact our support team at support@savedfeast.com or call us at 1-800-SAVED-FEAST.',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Contact Support', onPress: () => {
-          // In a real app, this would open email or phone
-          Alert.alert('Support', 'Opening support contact...');
-        }}
+        {
+          text: 'Contact Support',
+          onPress: () => {
+            // In a real app, this would open email or phone
+            Alert.alert('Support', 'Opening support contact...');
+          },
+        },
       ]
     );
   };
@@ -141,10 +146,14 @@ export default function ProfileTabScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.loadingContainer}>
           <LoadingSpinner size="large" />
-          <Text style={[styles.loadingText, { color: colors.text }]}>Loading profile...</Text>
+          <Text style={[styles.loadingText, { color: colors.text }]}>
+            Loading profile...
+          </Text>
         </View>
       </SafeAreaView>
     );
@@ -152,13 +161,22 @@ export default function ProfileTabScreen() {
 
   if (!isAuthenticated || !user) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.notAuthenticatedContainer}>
-            <View style={[styles.iconContainer, { backgroundColor: colors.primary }]}>
+            <View
+              style={[
+                styles.iconContainer,
+                { backgroundColor: colors.primary },
+              ]}
+            >
               <Ionicons name="person-outline" size={48} color="#FFFFFF" />
             </View>
-            <Text style={[styles.title, { color: colors.text }]}>Welcome to SavedFeast</Text>
+            <Text style={[styles.title, { color: colors.text }]}>
+              Welcome to SavedFeast
+            </Text>
             <Text style={[styles.subtitle, { color: colors.text }]}>
               Please log in to access your profile and manage your account.
             </Text>
@@ -183,19 +201,23 @@ export default function ProfileTabScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>Profile</Text>
-                     <View style={styles.headerButtons}>
-             <TouchableOpacity
-               style={styles.editButton}
-               onPress={() => router.push('/profile')}
-             >
-               <Ionicons name="pencil" size={24} color={colors.primary} />
-             </TouchableOpacity>
-           </View>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>
+            Profile
+          </Text>
+          <View style={styles.headerButtons}>
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() => router.push('/profile')}
+            >
+              <Ionicons name="pencil" size={24} color={colors.primary} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Profile Card */}
@@ -203,7 +225,8 @@ export default function ProfileTabScreen() {
           <View style={styles.profileHeader}>
             <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
               <Text style={styles.avatarText}>
-                {user.first_name?.charAt(0)?.toUpperCase()}{user.last_name?.charAt(0)?.toUpperCase()}
+                {user.first_name?.charAt(0)?.toUpperCase()}
+                {user.last_name?.charAt(0)?.toUpperCase()}
               </Text>
             </View>
             <View style={styles.profileInfo}>
@@ -221,13 +244,21 @@ export default function ProfileTabScreen() {
             {user.phone && (
               <View style={styles.detailRow}>
                 <Ionicons name="call-outline" size={20} color={colors.text} />
-                <Text style={[styles.detailText, { color: colors.text }]}>{user.phone}</Text>
+                <Text style={[styles.detailText, { color: colors.text }]}>
+                  {user.phone}
+                </Text>
               </View>
             )}
             {user.address && (
               <View style={styles.detailRow}>
-                <Ionicons name="location-outline" size={20} color={colors.text} />
-                <Text style={[styles.detailText, { color: colors.text }]}>{user.address}</Text>
+                <Ionicons
+                  name="location-outline"
+                  size={20}
+                  color={colors.text}
+                />
+                <Text style={[styles.detailText, { color: colors.text }]}>
+                  {user.address}
+                </Text>
               </View>
             )}
           </View>
@@ -235,25 +266,61 @@ export default function ProfileTabScreen() {
 
         {/* Quick Actions */}
         <Card style={styles.quickActionsCard} elevation={3}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Quick Actions</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            Quick Actions
+          </Text>
           <View style={styles.quickActions}>
-            <TouchableOpacity style={styles.quickAction} onPress={() => router.push('/orders')}>
-              <View style={[styles.quickActionIcon, { backgroundColor: colors.primary }]}>
+            <TouchableOpacity
+              style={styles.quickAction}
+              onPress={() => router.push('/orders')}
+            >
+              <View
+                style={[
+                  styles.quickActionIcon,
+                  { backgroundColor: colors.primary },
+                ]}
+              >
                 <Ionicons name="receipt-outline" size={24} color="#FFFFFF" />
               </View>
-              <Text style={[styles.quickActionText, { color: colors.text }]}>Orders</Text>
+              <Text style={[styles.quickActionText, { color: colors.text }]}>
+                Orders
+              </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.quickAction} onPress={handleFavorites}>
-              <View style={[styles.quickActionIcon, { backgroundColor: colors.secondary }]}>
+            <TouchableOpacity
+              style={styles.quickAction}
+              onPress={handleFavorites}
+            >
+              <View
+                style={[
+                  styles.quickActionIcon,
+                  { backgroundColor: colors.secondary },
+                ]}
+              >
                 <Ionicons name="heart-outline" size={24} color="#FFFFFF" />
               </View>
-              <Text style={[styles.quickActionText, { color: colors.text }]}>Favorites</Text>
+              <Text style={[styles.quickActionText, { color: colors.text }]}>
+                Favorites
+              </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.quickAction} onPress={handleNotifications}>
-              <View style={[styles.quickActionIcon, { backgroundColor: colors.primary }]}>
-                <Ionicons name="notifications-outline" size={24} color="#FFFFFF" />
+            <TouchableOpacity
+              style={styles.quickAction}
+              onPress={handleNotifications}
+            >
+              <View
+                style={[
+                  styles.quickActionIcon,
+                  { backgroundColor: colors.primary },
+                ]}
+              >
+                <Ionicons
+                  name="notifications-outline"
+                  size={24}
+                  color="#FFFFFF"
+                />
               </View>
-              <Text style={[styles.quickActionText, { color: colors.text }]}>Notifications</Text>
+              <Text style={[styles.quickActionText, { color: colors.text }]}>
+                Notifications
+              </Text>
             </TouchableOpacity>
           </View>
         </Card>
@@ -265,19 +332,39 @@ export default function ProfileTabScreen() {
               key={index}
               style={[
                 styles.menuItem,
-                index < menuItems.length - 1 && { borderBottomWidth: 1, borderBottomColor: colors.border }
+                index < menuItems.length - 1 && {
+                  borderBottomWidth: 1,
+                  borderBottomColor: colors.border,
+                },
               ]}
               onPress={item.onPress}
             >
               <View style={styles.menuItemLeft}>
-                <Ionicons name={item.icon as any} size={24} color={colors.text} />
+                <Ionicons
+                  name={item.icon as any}
+                  size={24}
+                  color={colors.text}
+                />
                 <View style={styles.menuItemContent}>
-                  <Text style={[styles.menuItemTitle, { color: colors.text }]}>{item.title}</Text>
-                  <Text style={[styles.menuItemSubtitle, { color: colors.text + '80' }]}>{item.subtitle}</Text>
+                  <Text style={[styles.menuItemTitle, { color: colors.text }]}>
+                    {item.title}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.menuItemSubtitle,
+                      { color: colors.text + '80' },
+                    ]}
+                  >
+                    {item.subtitle}
+                  </Text>
                 </View>
               </View>
               {item.showChevron && (
-                <Ionicons name="chevron-forward" size={20} color={colors.text} />
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={colors.text}
+                />
               )}
             </TouchableOpacity>
           ))}
@@ -285,14 +372,24 @@ export default function ProfileTabScreen() {
 
         {/* App Info */}
         <Card style={styles.appInfoCard} elevation={3}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>App Information</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            App Information
+          </Text>
           <View style={styles.appInfoRow}>
-            <Text style={[styles.appInfoLabel, { color: colors.text }]}>Version</Text>
-            <Text style={[styles.appInfoValue, { color: colors.text }]}>1.0.0</Text>
+            <Text style={[styles.appInfoLabel, { color: colors.text }]}>
+              Version
+            </Text>
+            <Text style={[styles.appInfoValue, { color: colors.text }]}>
+              1.0.0
+            </Text>
           </View>
           <View style={styles.appInfoRow}>
-            <Text style={[styles.appInfoLabel, { color: colors.text }]}>Build</Text>
-            <Text style={[styles.appInfoValue, { color: colors.text }]}>2024.1</Text>
+            <Text style={[styles.appInfoLabel, { color: colors.text }]}>
+              Build
+            </Text>
+            <Text style={[styles.appInfoValue, { color: colors.text }]}>
+              2024.1
+            </Text>
           </View>
         </Card>
 
@@ -304,8 +401,8 @@ export default function ProfileTabScreen() {
           size="large"
           style={styles.logoutButton}
         />
-             </ScrollView>
-     </SafeAreaView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

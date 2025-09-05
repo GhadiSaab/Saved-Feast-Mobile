@@ -29,7 +29,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   console.log('ProtectedRoute - isLoading:', isLoading);
   console.log('ProtectedRoute - requireAuth:', requireAuth);
 
-  const handleAuthRequired = () => {
+  const _ = () => {
     if (onAuthRequired) {
       onAuthRequired();
     } else {
@@ -55,7 +55,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <Text style={[styles.title, { color: colors.text }]}>Authentication Required</Text>
+        <Text style={[styles.title, { color: colors.text }]}>
+          Authentication Required
+        </Text>
         <Text style={[styles.message, { color: colors.text }]}>
           Please log in to access this feature.
         </Text>

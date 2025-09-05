@@ -49,7 +49,9 @@ export default function FeedScreen() {
   const [showFilters, setShowFilters] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [favoriteStates, setFavoriteStates] = useState<Record<number, boolean>>({});
+  const [favoriteStates, setFavoriteStates] = useState<Record<number, boolean>>(
+    {}
+  );
 
   // Fetch meals with better error handling and retry logic
   const {
@@ -64,7 +66,7 @@ export default function FeedScreen() {
     queryFn: () => mealService.getMeals(filters),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 3, // Retry 3 times
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
   });
@@ -75,7 +77,7 @@ export default function FeedScreen() {
     queryFn: () => mealService.getFilters(),
     staleTime: 10 * 60 * 1000, // 10 minutes
     retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
   });
@@ -147,7 +149,7 @@ export default function FeedScreen() {
   const handleFavoriteToggle = (mealId: number, isFavorited: boolean) => {
     setFavoriteStates(prev => ({
       ...prev,
-      [mealId]: isFavorited
+      [mealId]: isFavorited,
     }));
   };
 
@@ -178,8 +180,8 @@ export default function FeedScreen() {
   };
 
   const renderMealItem = ({ item }: { item: any }) => (
-    <MealCard 
-      meal={item} 
+    <MealCard
+      meal={item}
       onPress={() => handleMealPress(item)}
       isFavorited={favoriteStates[item.id] || false}
       onFavoriteToggle={handleFavoriteToggle}
@@ -190,9 +192,10 @@ export default function FeedScreen() {
     <Animated.View style={[styles.header, { opacity: heroOpacity }]}>
       {/* Hero Section with Gradient */}
       <LinearGradient
-        colors={colorScheme === 'dark' 
-          ? ['#2C3E50', '#34495E', '#2C3E50'] 
-          : ['#F8F6F1', '#FDFBF7', '#F8F6F1']
+        colors={
+          colorScheme === 'dark'
+            ? ['#2C3E50', '#34495E', '#2C3E50']
+            : ['#F8F6F1', '#FDFBF7', '#F8F6F1']
         }
         style={styles.heroGradient}
         start={{ x: 0, y: 0 }}
@@ -200,59 +203,105 @@ export default function FeedScreen() {
       >
         <View style={styles.heroContent}>
           <View style={styles.logoContainer}>
-            <View style={[styles.logoCircle, { backgroundColor: colors.primary }]}>
+            <View
+              style={[styles.logoCircle, { backgroundColor: colors.primary }]}
+            >
               <Ionicons name="leaf" size={32} color="#FFFFFF" />
             </View>
           </View>
-          
+
           <Text style={[styles.heroTitle, { color: colors.text }]}>
             Save Food, Save Money,{'\n'}Save the Planet
           </Text>
           <Text style={[styles.heroSubtitle, { color: colors.text }]}>
             Discover delicious meals from local restaurants at amazing prices
           </Text>
-          
+
           {/* Enhanced Stats */}
           <View style={styles.statsContainer}>
             <View style={[styles.statCard, { backgroundColor: colors.card }]}>
-              <View style={[styles.statIcon, { backgroundColor: colors.primary + '20' }]}>
-                <Ionicons name="leaf-outline" size={24} color={colors.primary} />
+              <View
+                style={[
+                  styles.statIcon,
+                  { backgroundColor: colors.primary + '20' },
+                ]}
+              >
+                <Ionicons
+                  name="leaf-outline"
+                  size={24}
+                  color={colors.primary}
+                />
               </View>
-              <Text style={[styles.statNumber, { color: colors.primary }]}>2.5M</Text>
-              <Text style={[styles.statLabel, { color: colors.text }]}>Meals Saved</Text>
+              <Text style={[styles.statNumber, { color: colors.primary }]}>
+                2.5M
+              </Text>
+              <Text style={[styles.statLabel, { color: colors.text }]}>
+                Meals Saved
+              </Text>
             </View>
-            
+
             <View style={[styles.statCard, { backgroundColor: colors.card }]}>
-              <View style={[styles.statIcon, { backgroundColor: colors.accent + '20' }]}>
-                <Ionicons name="wallet-outline" size={24} color={colors.accent} />
+              <View
+                style={[
+                  styles.statIcon,
+                  { backgroundColor: colors.accent + '20' },
+                ]}
+              >
+                <Ionicons
+                  name="wallet-outline"
+                  size={24}
+                  color={colors.accent}
+                />
               </View>
-              <Text style={[styles.statNumber, { color: colors.accent }]}>€15M</Text>
-              <Text style={[styles.statLabel, { color: colors.text }]}>Money Saved</Text>
+              <Text style={[styles.statNumber, { color: colors.accent }]}>
+                €15M
+              </Text>
+              <Text style={[styles.statLabel, { color: colors.text }]}>
+                Money Saved
+              </Text>
             </View>
-            
+
             <View style={[styles.statCard, { backgroundColor: colors.card }]}>
-              <View style={[styles.statIcon, { backgroundColor: colors.secondary + '20' }]}>
-                <Ionicons name="restaurant-outline" size={24} color={colors.secondary} />
+              <View
+                style={[
+                  styles.statIcon,
+                  { backgroundColor: colors.secondary + '20' },
+                ]}
+              >
+                <Ionicons
+                  name="restaurant-outline"
+                  size={24}
+                  color={colors.secondary}
+                />
               </View>
-              <Text style={[styles.statNumber, { color: colors.secondary }]}>500+</Text>
-              <Text style={[styles.statLabel, { color: colors.text }]}>Local Partners</Text>
+              <Text style={[styles.statNumber, { color: colors.secondary }]}>
+                500+
+              </Text>
+              <Text style={[styles.statLabel, { color: colors.text }]}>
+                Local Partners
+              </Text>
             </View>
           </View>
         </View>
       </LinearGradient>
 
       {/* Enhanced Search Bar */}
-      <Animated.View 
+      <Animated.View
         style={[
-          styles.searchContainer, 
-          { 
+          styles.searchContainer,
+          {
             backgroundColor: colors.card,
-            transform: [{ scale: searchBarScale }]
-          }
+            transform: [{ scale: searchBarScale }],
+          },
         ]}
       >
         <View style={styles.searchInputContainer}>
-          <Ionicons name="search" size={20} color={colors.primary} style={styles.searchIcon} />
+          <Ionicons
+            name="search"
+            size={20}
+            color={colors.primary}
+            style={styles.searchIcon}
+          />
           <TextInput
             style={[styles.searchInput, { color: colors.text }]}
             placeholder="Search for delicious meals..."
@@ -266,7 +315,10 @@ export default function FeedScreen() {
           />
         </View>
         <TouchableOpacity
-          style={[styles.filterButton, { backgroundColor: colors.primary + '20' }]}
+          style={[
+            styles.filterButton,
+            { backgroundColor: colors.primary + '20' },
+          ]}
           onPress={() => setShowFilters(!showFilters)}
         >
           <Ionicons name="filter" size={20} color={colors.primary} />
@@ -275,14 +327,13 @@ export default function FeedScreen() {
 
       {/* Enhanced Filters */}
       {showFilters && (
-        <Animated.View 
-          style={[
-            styles.filtersContainer, 
-            { backgroundColor: colors.card }
-          ]}
+        <Animated.View
+          style={[styles.filtersContainer, { backgroundColor: colors.card }]}
         >
           <View style={styles.filterHeader}>
-            <Text style={[styles.filterTitle, { color: colors.text }]}>Categories</Text>
+            <Text style={[styles.filterTitle, { color: colors.text }]}>
+              Categories
+            </Text>
             <TouchableOpacity onPress={() => setShowFilters(false)}>
               <Ionicons name="close" size={20} color={colors.text} />
             </TouchableOpacity>
@@ -291,36 +342,40 @@ export default function FeedScreen() {
             <TouchableOpacity
               style={[
                 styles.categoryChip,
-                selectedCategory === '' && { 
+                selectedCategory === '' && {
                   backgroundColor: colors.primary,
-                  transform: [{ scale: categoryScale }]
-                }
+                  transform: [{ scale: categoryScale }],
+                },
               ]}
               onPress={() => handleCategoryChange('')}
             >
-              <Text style={[
-                styles.categoryText,
-                selectedCategory === '' && { color: '#FFFFFF' }
-              ]}>
+              <Text
+                style={[
+                  styles.categoryText,
+                  selectedCategory === '' && { color: '#FFFFFF' },
+                ]}
+              >
                 All
               </Text>
             </TouchableOpacity>
-            {filterOptions?.categories?.map((category) => (
+            {filterOptions?.categories?.map(category => (
               <TouchableOpacity
                 key={category.id}
                 style={[
                   styles.categoryChip,
-                  selectedCategory === category.id && { 
+                  selectedCategory === category.id && {
                     backgroundColor: colors.primary,
-                    transform: [{ scale: categoryScale }]
-                  }
+                    transform: [{ scale: categoryScale }],
+                  },
                 ]}
                 onPress={() => handleCategoryChange(category.id)}
               >
-                <Text style={[
-                  styles.categoryText,
-                  selectedCategory === category.id && { color: '#FFFFFF' }
-                ]}>
+                <Text
+                  style={[
+                    styles.categoryText,
+                    selectedCategory === category.id && { color: '#FFFFFF' },
+                  ]}
+                >
                   {category.name}
                 </Text>
               </TouchableOpacity>
@@ -331,16 +386,24 @@ export default function FeedScreen() {
 
       {/* Quick Actions */}
       <View style={styles.quickActions}>
-        <TouchableOpacity 
-          style={[styles.quickAction, { backgroundColor: colors.primary + '20' }]}
+        <TouchableOpacity
+          style={[
+            styles.quickAction,
+            { backgroundColor: colors.primary + '20' },
+          ]}
           onPress={() => router.push('/orders')}
         >
           <Ionicons name="receipt-outline" size={20} color={colors.primary} />
-          <Text style={[styles.quickActionText, { color: colors.primary }]}>Orders</Text>
+          <Text style={[styles.quickActionText, { color: colors.primary }]}>
+            Orders
+          </Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={[styles.quickAction, { backgroundColor: colors.accent + '20' }]}
+
+        <TouchableOpacity
+          style={[
+            styles.quickAction,
+            { backgroundColor: colors.accent + '20' },
+          ]}
           onPress={() => router.push('/checkout')}
         >
           <Ionicons name="cart-outline" size={20} color={colors.accent} />
@@ -348,13 +411,18 @@ export default function FeedScreen() {
             Cart ({getItemCount()})
           </Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={[styles.quickAction, { backgroundColor: colors.secondary + '20' }]}
+
+        <TouchableOpacity
+          style={[
+            styles.quickAction,
+            { backgroundColor: colors.secondary + '20' },
+          ]}
           onPress={() => router.push('/profile')}
         >
           <Ionicons name="person-outline" size={20} color={colors.secondary} />
-          <Text style={[styles.quickActionText, { color: colors.secondary }]}>Profile</Text>
+          <Text style={[styles.quickActionText, { color: colors.secondary }]}>
+            Profile
+          </Text>
         </TouchableOpacity>
       </View>
     </Animated.View>
@@ -362,15 +430,21 @@ export default function FeedScreen() {
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <View style={[styles.emptyIconContainer, { backgroundColor: colors.primary + '20' }]}>
+      <View
+        style={[
+          styles.emptyIconContainer,
+          { backgroundColor: colors.primary + '20' },
+        ]}
+      >
         <Ionicons name="restaurant-outline" size={64} color={colors.primary} />
       </View>
-      <Text style={[styles.emptyTitle, { color: colors.text }]}>No meals available</Text>
+      <Text style={[styles.emptyTitle, { color: colors.text }]}>
+        No meals available
+      </Text>
       <Text style={[styles.emptySubtitle, { color: colors.text }]}>
-        {isError 
+        {isError
           ? 'Failed to load meals. Please check your connection and try again.'
-          : 'No meals match your current filters. Try adjusting your search criteria.'
-        }
+          : 'No meals match your current filters. Try adjusting your search criteria.'}
       </Text>
       {isError && (
         <Button
@@ -393,15 +467,31 @@ export default function FeedScreen() {
   // Show error state with retry option
   if (isError && !mealsData) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-        <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
+        <StatusBar
+          barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
+        />
         <View style={styles.errorContainer}>
-          <View style={[styles.errorIconContainer, { backgroundColor: colors.error + '20' }]}>
-            <Ionicons name="alert-circle-outline" size={64} color={colors.error} />
+          <View
+            style={[
+              styles.errorIconContainer,
+              { backgroundColor: colors.error + '20' },
+            ]}
+          >
+            <Ionicons
+              name="alert-circle-outline"
+              size={64}
+              color={colors.error}
+            />
           </View>
-          <Text style={[styles.errorTitle, { color: colors.text }]}>Something went wrong</Text>
+          <Text style={[styles.errorTitle, { color: colors.text }]}>
+            Something went wrong
+          </Text>
           <Text style={[styles.errorMessage, { color: colors.text }]}>
-            {error?.message || 'Failed to load meals. Please check your connection.'}
+            {error?.message ||
+              'Failed to load meals. Please check your connection.'}
           </Text>
           <Button
             title="Try Again"
@@ -415,12 +505,16 @@ export default function FeedScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
+      <StatusBar
+        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
+      />
       <FlatList
         data={mealsData?.data || []}
         renderItem={renderMealItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={item => item.id.toString()}
         numColumns={2}
         columnWrapperStyle={styles.row}
         ListHeaderComponent={renderHeader}

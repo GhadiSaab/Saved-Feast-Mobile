@@ -42,6 +42,7 @@ This project and everyone participating in it is governed by our Code of Conduct
    - Click the "Fork" button in the top right
 
 2. **Clone your fork**
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/savedfeast-mobile.git
    cd savedfeast-mobile
@@ -280,6 +281,7 @@ git commit -m 'docs(readme): update installation instructions'
 ```
 
 **Commit Types:**
+
 - `feat`: New features
 - `fix`: Bug fixes
 - `docs`: Documentation changes
@@ -335,30 +337,37 @@ When creating an issue, please use the provided template and include:
 ## Bug Report
 
 ### Description
+
 The meal card doesn't display the correct price when the meal is discounted.
 
 ### Steps to Reproduce
+
 1. Open the app
 2. Navigate to the meals feed
 3. Look for a discounted meal
 4. Notice the price display issue
 
 ### Expected Behavior
+
 The meal card should show the discounted price prominently.
 
 ### Actual Behavior
+
 The meal card shows the original price instead of the discounted price.
 
 ### Environment
+
 - Device: iPhone 14 Pro
 - OS: iOS 17.0
 - App Version: 1.0.0
 - API Version: Latest
 
 ### Screenshots
+
 [Add screenshots here]
 
 ### Logs
+
 [Add relevant logs here]
 ```
 
@@ -376,15 +385,19 @@ The meal card shows the original price instead of the discounted price.
 ## Feature Request
 
 ### Problem Statement
+
 [Describe the problem this feature would solve]
 
 ### Proposed Solution
+
 [Describe your proposed solution]
 
 ### Alternative Solutions
+
 [Describe any alternative solutions you've considered]
 
 ### Additional Context
+
 [Add any other context, screenshots, or examples]
 ```
 
@@ -400,6 +413,7 @@ The meal card shows the original price instead of the discounted price.
 ### Tools and Extensions
 
 **VS Code Extensions:**
+
 - ESLint
 - Prettier
 - TypeScript Importer
@@ -407,6 +421,7 @@ The meal card shows the original price instead of the discounted price.
 - Auto Rename Tag
 
 **Development Tools:**
+
 - React Native Debugger
 - Flipper
 - Expo DevTools

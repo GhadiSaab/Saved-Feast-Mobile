@@ -26,7 +26,9 @@ const TestComponent = () => {
     <div>
       <div data-testid="isAuthenticated">{auth.isAuthenticated.toString()}</div>
       <div data-testid="isLoading">{auth.isLoading.toString()}</div>
-      <div data-testid="user">{auth.user ? JSON.stringify(auth.user) : 'null'}</div>
+      <div data-testid="user">
+        {auth.user ? JSON.stringify(auth.user) : 'null'}
+      </div>
     </div>
   );
 };
@@ -51,7 +53,7 @@ describe('AuthContext', () => {
 
     it('should initialize with authenticated user when token exists', async () => {
       const mockUser = { id: 1, email: 'test@example.com', first_name: 'Test' };
-      
+
       (authService.isAuthenticated as jest.Mock).mockResolvedValue(true);
       (authService.getCurrentUser as jest.Mock).mockResolvedValue(mockUser);
 
@@ -106,7 +108,9 @@ describe('AuthContext', () => {
   describe('useAuth hook', () => {
     it('should throw error when used outside AuthProvider', () => {
       // Suppress console.error for this test
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
 
       expect(() => {
         render(<TestComponent />);
@@ -130,8 +134,11 @@ describe('AuthContext', () => {
 
     it('should handle successful login', async () => {
       const mockUser = { id: 1, email: 'test@example.com' };
-      const mockCredentials = { email: 'test@example.com', password: 'password' };
-      
+      const mockCredentials = {
+        email: 'test@example.com',
+        password: 'password',
+      };
+
       (authService.login as jest.Mock).mockResolvedValue({ user: mockUser });
 
       render(
@@ -156,7 +163,7 @@ describe('AuthContext', () => {
     it('should handle login failure', async () => {
       const mockCredentials = { email: 'test@example.com', password: 'wrong' };
       const mockError = new Error('Invalid credentials');
-      
+
       (authService.login as jest.Mock).mockRejectedValue(mockError);
 
       render(
@@ -178,8 +185,12 @@ describe('AuthContext', () => {
 
     it('should handle successful registration', async () => {
       const mockUser = { id: 1, email: 'new@example.com' };
-      const mockUserData = { email: 'new@example.com', password: 'password', first_name: 'New' };
-      
+      const mockUserData = {
+        email: 'new@example.com',
+        password: 'password',
+        first_name: 'New',
+      };
+
       (authService.register as jest.Mock).mockResolvedValue({ user: mockUser });
 
       render(
@@ -204,7 +215,7 @@ describe('AuthContext', () => {
     it('should handle registration failure', async () => {
       const mockUserData = { email: 'invalid', password: 'password' };
       const mockError = new Error('Invalid email');
-      
+
       (authService.register as jest.Mock).mockRejectedValue(mockError);
 
       render(
@@ -226,7 +237,7 @@ describe('AuthContext', () => {
 
     it('should handle successful logout', async () => {
       const mockUser = { id: 1, email: 'test@example.com' };
-      
+
       (authService.getCurrentUser as jest.Mock).mockResolvedValue(mockUser);
       (authService.logout as jest.Mock).mockResolvedValue(undefined);
 
@@ -252,7 +263,7 @@ describe('AuthContext', () => {
     it('should clear user data even if logout fails', async () => {
       const mockUser = { id: 1, email: 'test@example.com' };
       const mockError = new Error('Logout failed');
-      
+
       (authService.getCurrentUser as jest.Mock).mockResolvedValue(mockUser);
       (authService.logout as jest.Mock).mockRejectedValue(mockError);
 
@@ -277,7 +288,7 @@ describe('AuthContext', () => {
 
     it('should handle refreshUser successfully', async () => {
       const mockUser = { id: 1, email: 'test@example.com' };
-      
+
       (authService.getCurrentUser as jest.Mock).mockResolvedValue(mockUser);
 
       render(
@@ -302,9 +313,11 @@ describe('AuthContext', () => {
     it('should handle refreshUser network error gracefully', async () => {
       const mockUser = { id: 1, email: 'test@example.com' };
       const networkError = new Error('Network error occurred');
-      
+
       (authService.getCurrentUser as jest.Mock).mockResolvedValue(mockUser);
-      (authService.getCurrentUser as jest.Mock).mockRejectedValueOnce(networkError);
+      (authService.getCurrentUser as jest.Mock).mockRejectedValueOnce(
+        networkError
+      );
 
       render(
         <AuthProvider>
@@ -328,7 +341,7 @@ describe('AuthContext', () => {
 
     it('should clear user on refreshUser non-network error', async () => {
       const mockError = new Error('Unauthorized');
-      
+
       (authService.getCurrentUser as jest.Mock).mockRejectedValue(mockError);
 
       render(

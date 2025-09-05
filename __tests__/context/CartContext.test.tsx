@@ -30,7 +30,9 @@ describe('CartContext', () => {
 
     it('should throw error when useCart is used outside CartProvider', () => {
       // Suppress console.error for this test
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
 
       expect(() => {
         render(<TestComponent />);
@@ -197,7 +199,7 @@ describe('CartContext', () => {
       const mockMeal2 = {
         id: 2,
         title: 'Burger',
-        price: 12.50,
+        price: 12.5,
         description: 'Tasty burger',
         image: 'burger.jpg',
         category: 'American',
@@ -235,7 +237,7 @@ describe('CartContext', () => {
       const mockMeal2 = {
         id: 2,
         title: 'Burger',
-        price: 12.50,
+        price: 12.5,
         description: 'Tasty burger',
         image: 'burger.jpg',
         category: 'American',

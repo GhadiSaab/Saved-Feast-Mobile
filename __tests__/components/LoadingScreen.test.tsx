@@ -7,7 +7,7 @@ jest.mock('react-native', () => ({
   View: 'View',
   Text: 'Text',
   StyleSheet: {
-    create: jest.fn((styles) => styles),
+    create: jest.fn(styles => styles),
   },
 }));
 
@@ -19,19 +19,19 @@ jest.mock('../../components/LoadingSpinner', () => ({
 describe('LoadingScreen', () => {
   it('should render with default message', () => {
     const { getByText } = render(<LoadingScreen />);
-    
+
     expect(getByText('Loading...')).toBeTruthy();
   });
 
   it('should render with custom message', () => {
     const { getByText } = render(<LoadingScreen message="Please wait..." />);
-    
+
     expect(getByText('Please wait...')).toBeTruthy();
   });
 
   it('should render loading spinner', () => {
     const { getByTestId } = render(<LoadingScreen />);
-    
+
     expect(getByTestId('loading-screen')).toBeTruthy();
   });
 });
