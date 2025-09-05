@@ -57,16 +57,22 @@ export const MealCard: React.FC<MealCardProps> = ({
 
   const formatPickupTime = () => {
     if (meal.available_from && meal.available_until) {
-      const fromTime = new Date(meal.available_from).toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-      });
-      const untilTime = new Date(meal.available_until).toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-      });
+      const fromTime = new Date(meal.available_from).toLocaleTimeString(
+        'en-US',
+        {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        }
+      );
+      const untilTime = new Date(meal.available_until).toLocaleTimeString(
+        'en-US',
+        {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        }
+      );
       return `${fromTime} - ${untilTime}`;
     }
     return 'Time TBD';
@@ -149,12 +155,16 @@ export const MealCard: React.FC<MealCardProps> = ({
     if (onPress) {
       onPress();
     } else {
-      router.push(`/meal/${meal.id}`);
+      router.push('/');
     }
   };
 
   return (
-    <TouchableOpacity onPress={handleCardPress} activeOpacity={0.9} testID="meal-card">
+    <TouchableOpacity
+      onPress={handleCardPress}
+      activeOpacity={0.9}
+      testID="meal-card"
+    >
       <Card
         style={[styles.container, { width: cardWidth }] as any}
         elevation={3}
@@ -181,7 +191,7 @@ export const MealCard: React.FC<MealCardProps> = ({
             style={styles.favoriteButton}
             onPress={handleFavoriteToggle}
             disabled={favoriteLoading}
-            testID={favoriteLoading ? "favorite-loading" : "favorite-button"}
+            testID={favoriteLoading ? 'favorite-loading' : 'favorite-button'}
           >
             <Ionicons
               name={favorited ? 'heart' : 'heart-outline'}
@@ -201,7 +211,9 @@ export const MealCard: React.FC<MealCardProps> = ({
           {/* Restaurant Badge */}
           {meal.restaurant && (
             <View style={styles.restaurantBadge}>
-              <Text style={styles.restaurantText} testID="restaurant-badge">{meal.restaurant.name}</Text>
+              <Text style={styles.restaurantText} testID="restaurant-badge">
+                {meal.restaurant.name}
+              </Text>
             </View>
           )}
         </View>

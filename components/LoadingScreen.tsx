@@ -15,7 +15,10 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
   const colors = Colors[colorScheme ?? 'light'];
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]} testID="loading-screen">
+    <View
+      style={[styles.container, { backgroundColor: colors.background }]}
+      testID="loading-screen"
+    >
       <View style={styles.content}>
         <View
           style={[styles.iconContainer, { backgroundColor: colors.primary }]}

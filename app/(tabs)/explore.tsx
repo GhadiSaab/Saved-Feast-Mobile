@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/Button';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useAuth } from '@/context/AuthContext';
-import { useCart } from '@/context/CartContext';
+import { useCart, CartItem } from '@/context/CartContext';
 import { router } from 'expo-router';
 
 export default function CartScreen() {
@@ -217,7 +217,11 @@ export default function CartScreen() {
 
             <View style={styles.itemCountRow}>
               <Text style={[styles.itemCount, { color: colors.text }]}>
-                {cartItems.reduce((sum, item) => sum + item.quantity, 0)} items
+                {cartItems.reduce(
+                  (sum: number, item: CartItem) => sum + item.quantity,
+                  0
+                )}{' '}
+                items
               </Text>
             </View>
 

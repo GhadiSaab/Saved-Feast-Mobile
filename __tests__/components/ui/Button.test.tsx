@@ -77,7 +77,7 @@ describe('Button', () => {
 
     // When loading, the button should show ActivityIndicator and be disabled
     expect(getByTestId('button-loading')).toBeTruthy();
-    
+
     // Try to press the button container (TouchableOpacity)
     const button = getByTestId('button-loading');
     fireEvent.press(button);

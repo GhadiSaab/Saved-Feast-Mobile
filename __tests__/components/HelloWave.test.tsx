@@ -12,11 +12,11 @@ jest.mock('react-native-reanimated', () => {
     default: {
       View: View,
     },
-    useSharedValue: jest.fn((value) => ({ value })),
+    useSharedValue: jest.fn(value => ({ value })),
     withRepeat: jest.fn((animation, iterations) => animation),
     withTiming: jest.fn((value, config) => value),
     withSequence: jest.fn((...animations) => animations[0]),
-    useAnimatedStyle: jest.fn((style) => style),
+    useAnimatedStyle: jest.fn(style => style),
     Animated: {
       View: View,
     },

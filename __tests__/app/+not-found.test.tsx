@@ -18,7 +18,7 @@ describe('NotFoundScreen', () => {
   it('should render not found message', () => {
     const { getByText } = render(<NotFoundScreen />);
 
-    expect(getByText("This screen does not exist.")).toBeTruthy();
+    expect(getByText('This screen does not exist.')).toBeTruthy();
   });
 
   it('should render link to home', () => {

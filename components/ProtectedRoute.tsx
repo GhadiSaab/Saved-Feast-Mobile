@@ -29,7 +29,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   console.log('ProtectedRoute - isLoading:', isLoading);
   console.log('ProtectedRoute - requireAuth:', requireAuth);
 
-
   if (isLoading) {
     return <LoadingSpinner message="Loading..." fullScreen />;
   }

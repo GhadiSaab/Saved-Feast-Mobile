@@ -34,7 +34,11 @@ export const Card: React.FC<CardProps> = ({
     style,
   ];
 
-  return <View style={cardStyles} testID="card">{children}</View>;
+  return (
+    <View style={cardStyles} testID="card">
+      {children}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({

@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/Button';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useAuth } from '@/context/AuthContext';
-import { useCart } from '@/context/CartContext';
+import { useCart, CartItem } from '@/context/CartContext';
 import { Image } from 'expo-image';
 import orderService from '@/lib/orders';
 
@@ -43,7 +43,7 @@ export default function CheckoutScreen() {
     setIsSubmitting(true);
     try {
       const orderData = {
-        items: cartItems.map(item => ({
+        items: cartItems.map((item: CartItem) => ({
           meal_id: item.id,
           quantity: item.quantity,
         })),

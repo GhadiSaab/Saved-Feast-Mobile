@@ -132,11 +132,11 @@ describe('MealCard', () => {
     expect(mockOnPress).toHaveBeenCalled();
   });
 
-  it('should navigate to meal detail when card is pressed without onPress prop', () => {
+  it('should navigate to home when card is pressed without onPress prop', () => {
     const { getByTestId } = render(<MealCard meal={mockMeal} />);
 
     fireEvent.press(getByTestId('meal-card'));
-    expect(router.push).toHaveBeenCalledWith('/meal/1');
+    expect(router.push).toHaveBeenCalledWith('/');
   });
 
   it('should add meal to cart when Add to Cart button is pressed', () => {
@@ -257,7 +257,7 @@ describe('MealCard', () => {
   it('should handle authentication requirement for favorites', () => {
     // Reset mocks
     jest.clearAllMocks();
-    
+
     (useAuth as jest.Mock).mockReturnValue({
       isAuthenticated: false,
     });
@@ -268,7 +268,7 @@ describe('MealCard', () => {
 
     // Should call Alert.alert
     expect(mockAlert).toHaveBeenCalled();
-    
+
     // Should navigate to login
     expect(router.push).toHaveBeenCalledWith('/(auth)/login');
   });
@@ -276,7 +276,7 @@ describe('MealCard', () => {
   it('should handle authentication requirement for adding to cart', () => {
     // Reset mocks
     jest.clearAllMocks();
-    
+
     (useAuth as jest.Mock).mockReturnValue({
       isAuthenticated: false,
     });
@@ -287,7 +287,7 @@ describe('MealCard', () => {
 
     // Should call Alert.alert
     expect(mockAlert).toHaveBeenCalled();
-    
+
     // Should navigate to login
     expect(router.push).toHaveBeenCalledWith('/(auth)/login');
   });

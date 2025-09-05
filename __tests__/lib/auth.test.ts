@@ -46,7 +46,7 @@ describe('AuthService', () => {
     (SecureStore.deleteItemAsync as jest.Mock).mockClear();
     (api.get as jest.Mock).mockClear();
     (api.post as jest.Mock).mockClear();
-    
+
     // Reset mock implementations
     (SecureStore.getItemAsync as jest.Mock).mockReset();
     (SecureStore.setItemAsync as jest.Mock).mockReset();
