@@ -10,6 +10,7 @@ import 'react-native-reanimated';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
+import { NotificationProvider } from '@/context/NotificationContext';
 import { useEffect } from 'react';
 import { LoadingScreen } from '@/components/LoadingScreen';
 
@@ -70,25 +71,28 @@ export default function RootLayout() {
       <AuthProvider>
         <AuthGuard>
           <CartProvider>
-            <ThemeProvider
-              value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-            >
-              <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="checkout"
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen name="orders" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="settings"
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen name="+not-found" />
-              </Stack>
-              <StatusBar style="auto" />
-            </ThemeProvider>
+            <NotificationProvider>
+              <ThemeProvider
+                value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+              >
+                <Stack>
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="checkout"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen name="orders" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="settings"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen name="favorites" options={{ headerShown: false }} />
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+                <StatusBar style="auto" />
+              </ThemeProvider>
+            </NotificationProvider>
           </CartProvider>
         </AuthGuard>
       </AuthProvider>

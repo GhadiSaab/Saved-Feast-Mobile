@@ -15,6 +15,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarInactiveTintColor: Colors[colorScheme ?? 'light'].tabIconDefault,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
@@ -22,9 +23,30 @@ export default function TabLayout() {
           ios: {
             // Use a transparent background on iOS to show the blur effect
             position: 'absolute',
+            backgroundColor: colorScheme === 'dark' ? 'rgba(13, 17, 23, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+            borderTopColor: Colors[colorScheme ?? 'light'].border,
+            borderTopWidth: 1,
+            backdropFilter: 'blur(20px)',
           },
-          default: {},
+          default: {
+            backgroundColor: Colors[colorScheme ?? 'light'].card,
+            borderTopColor: Colors[colorScheme ?? 'light'].border,
+            borderTopWidth: 1,
+            elevation: 8,
+            shadowColor: colorScheme === 'dark' ? '#000' : '#000',
+            shadowOffset: { width: 0, height: -2 },
+            shadowOpacity: colorScheme === 'dark' ? 0.3 : 0.1,
+            shadowRadius: 4,
+          },
         }),
+        tabBarItemStyle: {
+          paddingVertical: 4,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+          marginTop: 2,
+        },
       }}
     >
       <Tabs.Screen
@@ -37,11 +59,28 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="orders"
+        options={{
+          title: 'Orders',
+          tabBarIcon: ({ color, focused }) => (
+            <IconSymbol 
+              size={28} 
+              name="doc.text.fill" 
+              color={focused ? '#27AE60' : color} 
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="explore"
         options={{
           title: 'Cart',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="cart.fill" color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <IconSymbol 
+              size={28} 
+              name="cart.fill" 
+              color={focused ? '#F39C12' : color} 
+            />
           ),
         }}
       />
@@ -50,8 +89,12 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="person.fill" color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <IconSymbol 
+              size={28} 
+              name="person.fill" 
+              color={focused ? '#E74C3C' : color} 
+            />
           ),
         }}
       />

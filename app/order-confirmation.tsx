@@ -10,12 +10,16 @@ import { Card } from '@/components/ui/Card';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useAuth } from '@/context/AuthContext';
+import { useNotifications } from '@/context/NotificationContext';
 import { Order, OrderItem, default as orderService } from '@/lib/orders';
+import { OrderCountdown } from '@/components/OrderCountdown';
+import { debug } from '@/lib/debug';
 
 export default function OrderConfirmationScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   useAuth();
+  const { scheduleImmediateOrderNotification } = useNotifications();
   const params = useLocalSearchParams();
 
   const [order, setOrder] = useState<Order | null>(null);
@@ -33,10 +37,40 @@ export default function OrderConfirmationScreen() {
   const loadOrder = async (orderId: number) => {
     try {
       setLoading(true);
+      debug.info('Loading order details', { component: 'OrderConfirmation', orderId: orderId.toString() });
+      
       const orderData = await orderService.getOrder(orderId);
+      
+      debug.info('Order loaded successfully', { component: 'OrderConfirmation', orderId: orderId.toString() }, {
+        orderId: orderData.id,
+        status: orderData.status,
+        totalAmount: orderData.total_amount,
+        totalAmountType: typeof orderData.total_amount,
+        totalAmountIsNull: orderData.total_amount === null,
+        totalAmountIsUndefined: orderData.total_amount === undefined,
+        itemsCount: orderData.items?.length || 0,
+        hasItems: !!orderData.items,
+        itemsStructure: orderData.items?.map(item => ({
+          id: item.id,
+          mealId: item.meal_id,
+          price: item.price,
+          priceType: typeof item.price,
+          quantity: item.quantity,
+          quantityType: typeof item.quantity,
+          hasPrice: item.price !== undefined,
+          hasQuantity: item.quantity !== undefined,
+        }))
+      });
+      
       setOrder(orderData);
       setOrderStatus(orderData.status);
+      
+      // Schedule notification for order confirmation
+      if (orderData.status === 'PENDING') {
+        scheduleImmediateOrderNotification(orderData.id, orderData.status);
+      }
     } catch (error: any) {
+      debug.error('Failed to load order', { component: 'OrderConfirmation', orderId: orderId.toString() }, error);
       Alert.alert('Error', error.message || 'Failed to load order details');
     } finally {
       setLoading(false);
@@ -45,17 +79,17 @@ export default function OrderConfirmationScreen() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending':
+      case 'PENDING':
         return '#FFA500';
-      case 'confirmed':
+      case 'ACCEPTED':
         return '#007AFF';
-      case 'preparing':
-        return '#FF9500';
-      case 'ready':
+      case 'READY_FOR_PICKUP':
         return '#34C759';
-      case 'completed':
+      case 'COMPLETED':
         return '#34C759';
-      case 'cancelled':
+      case 'CANCELLED_BY_CUSTOMER':
+      case 'CANCELLED_BY_RESTAURANT':
+      case 'EXPIRED':
         return '#FF3B30';
       default:
         return colors.text;
@@ -64,17 +98,17 @@ export default function OrderConfirmationScreen() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'pending':
+      case 'PENDING':
         return 'time-outline';
-      case 'confirmed':
+      case 'ACCEPTED':
         return 'checkmark-circle-outline';
-      case 'preparing':
-        return 'restaurant-outline';
-      case 'ready':
+      case 'READY_FOR_PICKUP':
         return 'checkmark-done-circle-outline';
-      case 'completed':
+      case 'COMPLETED':
         return 'checkmark-circle';
-      case 'cancelled':
+      case 'CANCELLED_BY_CUSTOMER':
+      case 'CANCELLED_BY_RESTAURANT':
+      case 'EXPIRED':
         return 'close-circle-outline';
       default:
         return 'help-circle-outline';
@@ -83,18 +117,20 @@ export default function OrderConfirmationScreen() {
 
   const getStatusDescription = (status: string) => {
     switch (status) {
-      case 'pending':
+      case 'PENDING':
         return 'Your order has been received and is being processed';
-      case 'confirmed':
-        return 'Your order has been confirmed by the restaurant';
-      case 'preparing':
-        return 'Your meal is being prepared by the restaurant';
-      case 'ready':
+      case 'ACCEPTED':
+        return 'Your order has been accepted by the restaurant';
+      case 'READY_FOR_PICKUP':
         return 'Your order is ready for pickup!';
-      case 'completed':
+      case 'COMPLETED':
         return 'Order completed successfully';
-      case 'cancelled':
-        return 'Order has been cancelled';
+      case 'CANCELLED_BY_CUSTOMER':
+        return 'Your order has been cancelled by you';
+      case 'CANCELLED_BY_RESTAURANT':
+        return 'Your order has been cancelled by the restaurant';
+      case 'EXPIRED':
+        return 'Your order has expired';
       default:
         return 'Order status unknown';
     }
@@ -209,6 +245,14 @@ export default function OrderConfirmationScreen() {
           </ThemedText>
         </Card>
 
+        {/* Countdown Timer */}
+        <OrderCountdown
+          pickupWindowEnd={order.pickup_window_end}
+          expiresAt={order.expired_at}
+          status={orderStatus}
+          style={styles.countdownContainer}
+        />
+
         {/* Order Details */}
         <Card style={styles.orderCard} elevation={3}>
           <ThemedText style={styles.sectionTitle}>Order Details</ThemedText>
@@ -221,7 +265,7 @@ export default function OrderConfirmationScreen() {
             <View style={styles.infoRow}>
               <ThemedText style={styles.infoLabel}>Pickup Time:</ThemedText>
               <ThemedText style={styles.infoValue}>
-                {formatPickupTime(order.pickup_time)}
+                {order.pickup_time ? formatPickupTime(order.pickup_time) : 'TBD'}
               </ThemedText>
             </View>
             <View style={styles.infoRow}>
@@ -232,14 +276,14 @@ export default function OrderConfirmationScreen() {
                   { color: colors.primary, fontWeight: 'bold' },
                 ]}
               >
-                €{order.total_amount.toFixed(2)}
+                €{order.total_amount ? Number(order.total_amount).toFixed(2) : '0.00'}
               </ThemedText>
             </View>
           </View>
 
           {/* Order Items */}
           <ThemedText style={styles.itemsTitle}>Items Ordered:</ThemedText>
-          {order.items.map((item: OrderItem, index: number) => (
+          {order.items && order.items.length > 0 ? order.items.map((item: OrderItem, index: number) => (
             <View key={index} style={styles.orderItem}>
               <View style={styles.itemInfo}>
                 <ThemedText style={styles.itemName}>
@@ -250,10 +294,12 @@ export default function OrderConfirmationScreen() {
                 </ThemedText>
               </View>
               <ThemedText style={styles.itemPrice}>
-                €{(item.price * item.quantity).toFixed(2)}
+                €{((Number(item.price) || 0) * (item.quantity || 0)).toFixed(2)}
               </ThemedText>
             </View>
-          ))}
+          )) : (
+            <ThemedText style={styles.noItemsText}>No items found</ThemedText>
+          )}
         </Card>
 
         {/* What Happens Next */}
@@ -506,5 +552,15 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     marginBottom: 8,
+  },
+  countdownContainer: {
+    marginHorizontal: 16,
+    marginVertical: 8,
+  },
+  noItemsText: {
+    fontSize: 14,
+    opacity: 0.7,
+    textAlign: 'center',
+    marginVertical: 16,
   },
 });

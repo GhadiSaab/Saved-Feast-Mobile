@@ -17,6 +17,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { Meal, default as mealService } from '@/lib/meals';
+import { formatImageUrl } from '@/lib/imageUtils';
 import { router } from 'expo-router';
 
 interface MealCardProps {
@@ -173,10 +174,14 @@ export const MealCard: React.FC<MealCardProps> = ({
         <View style={styles.imageContainer}>
           {meal.image ? (
             <Image
-              source={{ uri: meal.image }}
+              source={{ uri: formatImageUrl(meal.image) || undefined }}
               style={styles.image}
               contentFit="cover"
               placeholder="🍽️"
+              onError={() => {
+                console.log('Image failed to load:', meal.image, 'Formatted URL:', formatImageUrl(meal.image));
+              }}
+              transition={200}
             />
           ) : (
             <View
@@ -272,15 +277,15 @@ export const MealCard: React.FC<MealCardProps> = ({
                   <Text
                     style={[styles.currentPrice, { color: colors.primary }]}
                   >
-                    €{meal.current_price.toFixed(2)}
+                    €{meal.current_price ? meal.current_price.toFixed(2) : '0.00'}
                   </Text>
                   <Text style={[styles.originalPrice, { color: colors.text }]}>
-                    €{meal.original_price.toFixed(2)}
+                    €{meal.original_price ? meal.original_price.toFixed(2) : '0.00'}
                   </Text>
                 </View>
               ) : (
                 <Text style={[styles.currentPrice, { color: colors.primary }]}>
-                  €{meal.current_price.toFixed(2)}
+                  €{meal.current_price ? meal.current_price.toFixed(2) : '0.00'}
                 </Text>
               )}
             </View>

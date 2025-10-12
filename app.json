@@ -20,7 +20,32 @@
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to scan QR codes and take profile pictures.",
         "NSPhotoLibraryUsageDescription": "This app accesses your photo library to select profile pictures and meal images.",
-        "NSLocationWhenInUseUsageDescription": "This app uses location to show nearby restaurants and delivery options."
+        "NSLocationWhenInUseUsageDescription": "This app uses location to show nearby restaurants and delivery options.",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true,
+          "NSExceptionDomains": {
+            "localhost": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSIncludesSubdomains": true,
+              "NSTemporaryExceptionAllowsInsecureHTTPLoads": true
+            },
+            "127.0.0.1": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSIncludesSubdomains": true,
+              "NSTemporaryExceptionAllowsInsecureHTTPLoads": true
+            },
+            "0.0.0.0": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSIncludesSubdomains": true,
+              "NSTemporaryExceptionAllowsInsecureHTTPLoads": true
+            },
+            "192.168.1.20": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSIncludesSubdomains": true,
+              "NSTemporaryExceptionAllowsInsecureHTTPLoads": true
+            }
+          }
+        }
       }
     },
     "android": {
@@ -35,8 +60,11 @@
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
         "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
-      ]
+        "ACCESS_COARSE_LOCATION",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE"
+      ],
+      "usesCleartextTraffic": true
     },
     "web": {
       "bundler": "metro",
@@ -53,6 +81,13 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#ffffff"
+        }
       ]
     ],
     "experiments": {
@@ -65,6 +100,11 @@
       "eas": {
         "projectId": "your-project-id"
       }
+    },
+    "notification": {
+      "icon": "./assets/images/icon.png",
+      "color": "#ffffff",
+      "iosDisplayInForeground": true
     }
   }
 }

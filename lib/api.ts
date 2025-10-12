@@ -1,9 +1,18 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-const API_BASE_URL = __DEV__
-  ? 'http://192.168.1.116:8000/api' // Replace with your computer's IP address
-  : 'https://your-production-domain.com/api'; // Replace with your production URL
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ||
+  (__DEV__
+    ? 'http://172.29.144.1:8000/api' // Use your computer's IP address for mobile access
+    : 'https://your-production-domain.com/api' // Replace with your production URL
+  );
+
+// Log API configuration for debugging
+console.log('API Configuration:', {
+  baseURL: API_BASE_URL,
+  isDev: __DEV__,
+  envUrl: process.env.EXPO_PUBLIC_API_URL
+});
 
 // Create axios instance with increased timeout
 const api = axios.create({

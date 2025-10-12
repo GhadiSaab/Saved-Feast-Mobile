@@ -252,6 +252,7 @@ describe('MealCard', () => {
     await waitFor(() => {
       expect(getByTestId('favorite-button')).toBeTruthy();
     });
+
   });
 
   it('should handle authentication requirement for favorites', () => {

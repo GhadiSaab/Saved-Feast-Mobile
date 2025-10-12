@@ -18,6 +18,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { Meal } from '@/lib/meals';
+import { formatImageUrl } from '@/lib/imageUtils';
 import { router } from 'expo-router';
 
 interface MealDetailModalProps {
@@ -144,10 +145,14 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
           <View style={styles.imageContainer}>
             {meal.image ? (
               <Image
-                source={{ uri: meal.image }}
+                source={{ uri: formatImageUrl(meal.image) || undefined }}
                 style={styles.image}
                 contentFit="cover"
                 placeholder="🍽️"
+                onError={() => {
+                  console.log('Image failed to load:', meal.image, 'Formatted URL:', formatImageUrl(meal.image));
+                }}
+                transition={200}
               />
             ) : (
               <View

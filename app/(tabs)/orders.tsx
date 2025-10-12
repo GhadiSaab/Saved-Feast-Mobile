@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -20,10 +20,16 @@ import { Image } from 'expo-image';
 import orderService from '@/lib/orders';
 import { OrderCountdown } from '@/components/OrderCountdown';
 import { ClaimCodeModal } from '@/components/ClaimCodeModal';
+import { useAuth } from '@/context/AuthContext';
+import { useNotifications } from '@/context/NotificationContext';
+import { useFocusEffect } from '@react-navigation/native';
+import { debug } from '@/lib/debug';
 
-export default function OrdersScreen() {
+export default function OrdersTabScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { isAuthenticated, user } = useAuth();
+  const { scheduleImmediateOrderNotification } = useNotifications();
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [claimModalVisible, setClaimModalVisible] = useState(false);
   const [selectedOrderForClaim, setSelectedOrderForClaim] = useState<any>(null);
@@ -33,13 +39,45 @@ export default function OrdersScreen() {
     error,
     refetch,
     isRefetching,
+    isLoading,
   } = useQuery({
-    queryKey: ['orders'],
+    queryKey: ['orders', user?.id],
     queryFn: () => orderService.getOrders(1),
+    enabled: isAuthenticated, // Only fetch if user is authenticated
     staleTime: 30 * 1000, // 30 seconds
     refetchInterval: 30 * 1000, // Auto-refresh every 30 seconds
     refetchIntervalInBackground: true, // Continue refreshing in background
   });
+
+  // Refresh orders when the tab is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      if (isAuthenticated) {
+        debug.info('Orders tab focused, refreshing orders', { component: 'OrdersTab', userId: user?.id?.toString() });
+        refetch();
+      }
+    }, [isAuthenticated, refetch, user?.id])
+  );
+
+  // Debug logging for orders data
+  useEffect(() => {
+    if (ordersData) {
+      debug.info('Orders data updated', { component: 'OrdersTab', userId: user?.id?.toString() }, {
+        ordersCount: Array.isArray(ordersData.data) ? ordersData.data.length : 0,
+        hasData: !!ordersData.data,
+        hasPagination: !!ordersData.pagination,
+        dataType: typeof ordersData.data,
+        isArray: Array.isArray(ordersData.data),
+        rawData: ordersData,
+        orders: Array.isArray(ordersData.data) ? ordersData.data.map(order => ({
+          id: order.id,
+          status: order.status,
+          totalAmount: order.total_amount,
+          itemsCount: order.items?.length || 0,
+        })) : []
+      });
+    }
+  }, [ordersData, user?.id]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -146,7 +184,7 @@ export default function OrdersScreen() {
   };
 
   const renderOrderItem = ({ item }: { item: any }) => (
-    <Card style={[styles.orderCard, { backgroundColor: colors.card }]} elevation={2}>
+    <Card style={styles.orderCard} elevation={2}>
       <TouchableOpacity
         style={styles.orderHeader}
         onPress={() =>
@@ -154,17 +192,9 @@ export default function OrdersScreen() {
         }
       >
         <View style={styles.orderInfo}>
-          <View style={styles.orderNumberContainer}>
-            <Text style={[styles.orderNumber, { color: colors.text }]}>
-              Order #{item.id}
-            </Text>
-            <View
-              style={[
-                styles.statusIndicator,
-                { backgroundColor: getStatusColor(item.status) },
-              ]}
-            />
-          </View>
+          <Text style={[styles.orderNumber, { color: colors.text }]}>
+            Order #{item.id}
+          </Text>
           <Text style={[styles.orderDate, { color: colors.text }]}>
             {formatDate(item.created_at)}
           </Text>
@@ -174,16 +204,12 @@ export default function OrdersScreen() {
           <View
             style={[
               styles.statusBadge,
-              { 
-                backgroundColor: getStatusColor(item.status) + '15',
-                borderColor: getStatusColor(item.status) + '30',
-                borderWidth: 1,
-              },
+              { backgroundColor: getStatusColor(item.status) + '20' },
             ]}
           >
             <Ionicons
               name={getStatusIcon(item.status)}
-              size={14}
+              size={16}
               color={getStatusColor(item.status)}
             />
             <Text
@@ -199,28 +225,17 @@ export default function OrdersScreen() {
             name={selectedOrder?.id === item.id ? 'chevron-up' : 'chevron-down'}
             size={20}
             color={colors.text}
-            style={styles.chevronIcon}
           />
         </View>
       </TouchableOpacity>
 
-      <View style={[styles.orderSummary, { borderTopColor: colors.border }]}>
-        <View style={styles.summaryLeft}>
-          <Text style={[styles.totalAmount, { color: colors.primary }]}>
-            €{item.total_amount ? Number(item.total_amount).toFixed(2) : '0.00'}
-          </Text>
-          <Text style={[styles.itemCount, { color: colors.text }]}>
-            {item.items ? item.items.length : 0} item{(item.items ? item.items.length : 0) !== 1 ? 's' : ''}
-          </Text>
-        </View>
-        <View style={styles.summaryRight}>
-          {item.status === 'READY_FOR_PICKUP' && (
-            <View style={[styles.readyBadge, { backgroundColor: colors.success + '20' }]}>
-              <Ionicons name="checkmark-circle" size={16} color={colors.success} />
-              <Text style={[styles.readyText, { color: colors.success }]}>Ready</Text>
-            </View>
-          )}
-        </View>
+      <View style={styles.orderSummary}>
+        <Text style={[styles.totalAmount, { color: colors.primary }]}>
+          €{item.total_amount ? Number(item.total_amount).toFixed(2) : '0.00'}
+        </Text>
+        <Text style={[styles.itemCount, { color: colors.text }]}>
+          {item.items ? item.items.length : 0} item{(item.items ? item.items.length : 0) !== 1 ? 's' : ''}
+        </Text>
       </View>
 
       {/* Expanded Order Details */}
@@ -386,11 +401,34 @@ export default function OrdersScreen() {
     </View>
   );
 
+  const renderNotAuthenticated = () => (
+    <View style={styles.emptyState}>
+      <Ionicons name="lock-closed-outline" size={80} color={colors.text + '40'} />
+      <Text style={[styles.emptyTitle, { color: colors.text }]}>
+        Please log in
+      </Text>
+      <Text style={[styles.emptySubtitle, { color: colors.text }]}>
+        You need to be logged in to view your orders
+      </Text>
+      <Button
+        title="Login"
+        onPress={() => router.push('/(auth)/login')}
+        variant="primary"
+        style={styles.browseButton}
+      />
+    </View>
+  );
+
   if (error) {
     return (
       <SafeAreaView
         style={[styles.container, { backgroundColor: colors.background }]}
       >
+        <View style={styles.header}>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>
+            My Orders
+          </Text>
+        </View>
         <View style={styles.errorContainer}>
           <Ionicons
             name="alert-circle-outline"
@@ -414,22 +452,57 @@ export default function OrdersScreen() {
     );
   }
 
+  // Show login prompt if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>
+            My Orders
+          </Text>
+        </View>
+        {renderNotAuthenticated()}
+      </SafeAreaView>
+    );
+  }
+
+  // Show loading state
+  if (isLoading && !ordersData) {
+    return (
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
+        <View style={styles.header}>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>
+            My Orders
+          </Text>
+        </View>
+        <View style={styles.loadingContainer}>
+          <Ionicons name="hourglass-outline" size={64} color={colors.primary} />
+          <Text style={[styles.loadingText, { color: colors.text }]}>
+            Loading your orders...
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.background }]}
     >
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.background }]}>
+      <View style={styles.header}>
         <Text style={[styles.headerTitle, { color: colors.text }]}>
           My Orders
-        </Text>
-        <Text style={[styles.headerSubtitle, { color: colors.text }]}>
-          Track your meal orders
         </Text>
       </View>
 
       {/* Orders List */}
-      {ordersData?.data && ordersData.data.length > 0 ? (
+      {ordersData?.data && Array.isArray(ordersData.data) && ordersData.data.length > 0 ? (
         <FlatList
           data={ordersData.data}
           renderItem={renderOrderItem}
@@ -467,18 +540,11 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 16,
-    paddingVertical: 20,
-    paddingTop: 24,
+    paddingVertical: 16,
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: '800',
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    opacity: 0.7,
-    fontWeight: '500',
+    fontSize: 24,
+    fontWeight: 'bold',
   },
   listContent: {
     paddingHorizontal: 16,
@@ -486,33 +552,20 @@ const styles = StyleSheet.create({
   },
   orderCard: {
     marginBottom: 16,
-    borderRadius: 16,
-    overflow: 'hidden',
   },
   orderHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
-    paddingBottom: 12,
+    marginBottom: 12,
   },
   orderInfo: {
     flex: 1,
   },
-  orderNumberContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
   orderNumber: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginRight: 8,
-  },
-  statusIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
   },
   orderDate: {
     fontSize: 14,
@@ -526,56 +579,34 @@ const styles = StyleSheet.create({
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 16,
-    gap: 6,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  chevronIcon: {
-    opacity: 0.6,
-  },
-  orderSummary: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderTopWidth: 1,
-  },
-  summaryLeft: {
-    flex: 1,
-  },
-  summaryRight: {
-    alignItems: 'flex-end',
-  },
-  totalAmount: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 2,
-  },
-  itemCount: {
-    fontSize: 14,
-    opacity: 0.7,
-  },
-  readyBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
     gap: 4,
   },
-  readyText: {
+  statusText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '500',
+  },
+  orderSummary: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
+  },
+  totalAmount: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  itemCount: {
+    fontSize: 14,
+    opacity: 0.7,
   },
   orderDetails: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+    marginTop: 16,
+    paddingTop: 16,
     borderTopWidth: 1,
     borderTopColor: '#F0F0F0',
   },
@@ -583,13 +614,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   detailsTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '600',
   },
   orderItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',
   },
@@ -765,5 +796,16 @@ const styles = StyleSheet.create({
   },
   retryButton: {
     minWidth: 120,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+  },
+  loadingText: {
+    fontSize: 16,
+    marginTop: 16,
+    opacity: 0.7,
   },
 });

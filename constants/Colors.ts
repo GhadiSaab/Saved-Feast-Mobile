@@ -26,21 +26,21 @@ export const Colors = {
     dark: '#2C3E50',
   },
   dark: {
-    text: '#ECF0F1',
-    background: '#2C3E50',
-    tint: tintColorDark,
-    tabIconDefault: '#95A5A6',
-    tabIconSelected: tintColorDark,
-    primary: '#4A7C59',
-    secondary: '#A0522D',
-    accent: '#F39C12',
-    success: '#2ECC71',
-    warning: '#F1C40F',
-    error: '#E74C3C',
-    card: '#34495E',
-    border: '#4A5568',
-    warmBeige: '#2C3E50',
-    softCream: '#34495E',
-    dark: '#ECF0F1',
+    text: '#F8F9FA',
+    background: '#0D1117', // GitHub-style dark background
+    tint: '#58A6FF', // GitHub blue for better visibility
+    tabIconDefault: '#8B949E',
+    tabIconSelected: '#58A6FF',
+    primary: '#58A6FF', // Modern blue
+    secondary: '#F85149', // Modern red
+    accent: '#FFA657', // Modern orange
+    success: '#3FB950', // Modern green
+    warning: '#D29922', // Modern yellow
+    error: '#F85149', // Modern red
+    card: '#161B22', // GitHub-style card background
+    border: '#30363D', // Better border contrast
+    warmBeige: '#0D1117',
+    softCream: '#161B22',
+    dark: '#F8F9FA',
   },
 };

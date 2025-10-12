@@ -47,6 +47,7 @@ export default function FeedScreen() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<number | ''>('');
   const [showFilters, setShowFilters] = useState(false);
+  const [searchTimeout, setSearchTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [favoriteStates, setFavoriteStates] = useState<Record<number, boolean>>(
@@ -63,7 +64,10 @@ export default function FeedScreen() {
     isError,
   } = useQuery({
     queryKey: ['meals', filters],
-    queryFn: () => mealService.getMeals(filters),
+    queryFn: () => {
+      console.log('Query function called with filters:', filters);
+      return mealService.getMeals(filters);
+    },
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 3, // Retry 3 times
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
@@ -120,6 +124,12 @@ export default function FeedScreen() {
   };
 
   const handleSearch = () => {
+    // Clear any existing timeout
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    
+    // Update filters immediately
     setFilters(prev => ({
       ...prev,
       search: searchTerm,
@@ -127,14 +137,44 @@ export default function FeedScreen() {
     }));
   };
 
+  const handleSearchInput = (text: string) => {
+    setSearchTerm(text);
+    
+    // Clear any existing timeout
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    
+    // Set a new timeout for debounced search
+    const timeout = setTimeout(() => {
+      console.log('Triggering search with term:', text);
+      setFilters(prev => {
+        const newFilters = {
+          ...prev,
+          search: text,
+          page: 1,
+        };
+        console.log('Updated filters:', newFilters);
+        return newFilters;
+      });
+    }, 500); // 500ms debounce
+    
+    setSearchTimeout(timeout);
+  };
+
   const handleCategoryChange = (categoryId: number | '') => {
     animateCategorySelection();
     setSelectedCategory(categoryId);
-    setFilters(prev => ({
-      ...prev,
-      category_id: typeof categoryId === 'number' ? categoryId : undefined,
-      page: 1,
-    }));
+    console.log('Category changed to:', categoryId);
+    setFilters(prev => {
+      const newFilters = {
+        ...prev,
+        category_id: typeof categoryId === 'number' ? categoryId : undefined,
+        page: 1,
+      };
+      console.log('Updated filters for category:', newFilters);
+      return newFilters;
+    });
   };
 
   const handleLoadMore = () => {
@@ -163,6 +203,15 @@ export default function FeedScreen() {
       setFavoriteStates(states);
     }
   }, [favorites]);
+
+  // Cleanup search timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+    };
+  }, [searchTimeout]);
 
   const handleRetry = () => {
     console.log('Retrying meals fetch...');
@@ -307,12 +356,31 @@ export default function FeedScreen() {
             placeholder="Search for delicious meals..."
             placeholderTextColor={colors.text + '60'}
             value={searchTerm}
-            onChangeText={setSearchTerm}
+            onChangeText={handleSearchInput}
             onSubmitEditing={handleSearch}
             returnKeyType="search"
             onFocus={() => animateSearchBar(true)}
             onBlur={() => animateSearchBar(false)}
+            autoCorrect={false}
+            autoCapitalize="none"
+            blurOnSubmit={false}
           />
+          {searchTerm.length > 0 && (
+            <TouchableOpacity
+              onPress={() => {
+                setSearchTerm('');
+                setFilters(prev => ({
+                  ...prev,
+                  search: '',
+                  page: 1,
+                }));
+              }}
+              style={styles.clearButton}
+              testID="clear-search-button"
+            >
+              <Ionicons name="close-circle" size={20} color={colors.text} />
+            </TouchableOpacity>
+          )}
         </View>
         <TouchableOpacity
           style={[
@@ -320,6 +388,7 @@ export default function FeedScreen() {
             { backgroundColor: colors.primary + '20' },
           ]}
           onPress={() => setShowFilters(!showFilters)}
+          testID="filter-button"
         >
           <Ionicons name="filter" size={20} color={colors.primary} />
         </TouchableOpacity>
@@ -384,47 +453,6 @@ export default function FeedScreen() {
         </Animated.View>
       )}
 
-      {/* Quick Actions */}
-      <View style={styles.quickActions}>
-        <TouchableOpacity
-          style={[
-            styles.quickAction,
-            { backgroundColor: colors.primary + '20' },
-          ]}
-          onPress={() => router.push('/orders')}
-        >
-          <Ionicons name="receipt-outline" size={20} color={colors.primary} />
-          <Text style={[styles.quickActionText, { color: colors.primary }]}>
-            Orders
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.quickAction,
-            { backgroundColor: colors.accent + '20' },
-          ]}
-          onPress={() => router.push('/checkout')}
-        >
-          <Ionicons name="cart-outline" size={20} color={colors.accent} />
-          <Text style={[styles.quickActionText, { color: colors.accent }]}>
-            Cart ({getItemCount()})
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.quickAction,
-            { backgroundColor: colors.secondary + '20' },
-          ]}
-          onPress={() => router.push('/profile')}
-        >
-          <Ionicons name="person-outline" size={20} color={colors.secondary} />
-          <Text style={[styles.quickActionText, { color: colors.secondary }]}>
-            Profile
-          </Text>
-        </TouchableOpacity>
-      </View>
     </Animated.View>
   );
 
@@ -661,6 +689,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
+  clearButton: {
+    padding: 4,
+    marginLeft: 8,
+  },
   filterButton: {
     padding: 12,
     borderRadius: 12,
@@ -705,31 +737,6 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 14,
     fontWeight: '600',
-  },
-  quickActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-    gap: 12,
-  },
-  quickAction: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  quickActionText: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginLeft: 8,
   },
   row: {
     justifyContent: 'space-between',

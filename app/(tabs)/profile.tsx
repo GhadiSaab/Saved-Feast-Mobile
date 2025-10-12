@@ -48,11 +48,7 @@ export default function ProfileTabScreen() {
   };
 
   const handleFavorites = () => {
-    Alert.alert(
-      'Favorites',
-      'Your favorite meals will appear here. Like meals while browsing to save them for later!',
-      [{ text: 'OK' }]
-    );
+    router.push('/favorites');
   };
 
   const handleNotifications = () => {
@@ -65,6 +61,10 @@ export default function ProfileTabScreen() {
 
   const handleSettings = () => {
     router.push('/settings');
+  };
+
+  const handleDebug = () => {
+    router.push('/debug');
   };
 
   const handleHelpSupport = () => {
@@ -119,6 +119,13 @@ export default function ProfileTabScreen() {
       title: 'Settings',
       subtitle: 'App preferences and customization',
       onPress: handleSettings,
+      showChevron: true,
+    },
+    {
+      icon: 'bug-outline',
+      title: 'Debug Logs',
+      subtitle: 'View app debug information and logs',
+      onPress: handleDebug,
       showChevron: true,
     },
     {

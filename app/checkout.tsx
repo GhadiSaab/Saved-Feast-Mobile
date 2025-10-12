@@ -21,12 +21,15 @@ import { useAuth } from '@/context/AuthContext';
 import { useCart, CartItem } from '@/context/CartContext';
 import { Image } from 'expo-image';
 import orderService from '@/lib/orders';
+import { debug } from '@/lib/debug';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function CheckoutScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { user } = useAuth();
   const { cartItems, getCartTotal, clearCart } = useCart();
+  const queryClient = useQueryClient();
 
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,20 +45,56 @@ export default function CheckoutScreen() {
 
     setIsSubmitting(true);
     try {
+      debug.info('Starting order creation', { component: 'Checkout', userId: user?.id?.toString() }, {
+        cartItemsCount: cartItems.length,
+        cartItems: cartItems.map(item => ({
+          id: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        totalAmount: getCartTotal(),
+        notes: notes.trim() || undefined,
+        paymentMethod: 'CASH_ON_PICKUP',
+      });
+
       const orderData = {
         items: cartItems.map((item: CartItem) => ({
           meal_id: item.id,
           quantity: item.quantity,
         })),
         notes: notes.trim() || undefined,
+        payment_method: 'CASH_ON_PICKUP' as const, // Default payment method
       };
+
+      debug.info('Order data prepared', { component: 'Checkout' }, orderData);
 
       const order = await orderService.createOrder(orderData);
 
-      // Clear cart and redirect to order confirmation
+      debug.info('Order created successfully', { component: 'Checkout', orderId: order.id.toString() }, {
+        orderId: order.id,
+        status: order.status,
+        totalAmount: order.total_amount,
+        totalAmountType: typeof order.total_amount,
+        itemsCount: order.items?.length || 0,
+        orderStructure: {
+          hasId: !!order.id,
+          hasStatus: !!order.status,
+          hasTotalAmount: order.total_amount !== undefined && order.total_amount !== null,
+          hasItems: !!order.items,
+          itemsLength: order.items?.length || 0,
+        }
+      });
+
+      // Clear cart and invalidate orders cache
       clearCart();
+      
+      // Invalidate orders cache to refresh the orders list
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      
       router.replace(`/order-confirmation?orderId=${order.id}`);
     } catch (error: any) {
+      debug.error('Order creation failed', { component: 'Checkout', userId: user?.id?.toString() }, error);
       Alert.alert('Order Failed', error.message || 'Please try again');
     } finally {
       setIsSubmitting(false);
