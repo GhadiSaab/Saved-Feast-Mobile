@@ -80,14 +80,54 @@ export default function RootLayout() {
                   <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                   <Stack.Screen
                     name="checkout"
-                    options={{ headerShown: false }}
+                    options={{ 
+                      headerShown: true,
+                      title: 'Checkout',
+                      headerStyle: { backgroundColor: colorScheme === 'dark' ? '#1C1C1E' : '#FFFFFF' },
+                      headerTintColor: colorScheme === 'dark' ? '#FFFFFF' : '#000000',
+                      headerTitleStyle: { fontWeight: '600' }
+                    }}
                   />
-                  <Stack.Screen name="orders" options={{ headerShown: false }} />
+                  <Stack.Screen 
+                    name="orders" 
+                    options={{ 
+                      headerShown: true,
+                      title: 'My Orders',
+                      headerStyle: { backgroundColor: colorScheme === 'dark' ? '#1C1C1E' : '#FFFFFF' },
+                      headerTintColor: colorScheme === 'dark' ? '#FFFFFF' : '#000000',
+                      headerTitleStyle: { fontWeight: '600' }
+                    }} 
+                  />
                   <Stack.Screen
                     name="settings"
-                    options={{ headerShown: false }}
+                    options={{ 
+                      headerShown: true,
+                      title: 'Settings',
+                      headerStyle: { backgroundColor: colorScheme === 'dark' ? '#1C1C1E' : '#FFFFFF' },
+                      headerTintColor: colorScheme === 'dark' ? '#FFFFFF' : '#000000',
+                      headerTitleStyle: { fontWeight: '600' }
+                    }}
                   />
-                  <Stack.Screen name="favorites" options={{ headerShown: false }} />
+                  <Stack.Screen 
+                    name="favorites" 
+                    options={{ 
+                      headerShown: true,
+                      title: 'Favorites',
+                      headerStyle: { backgroundColor: colorScheme === 'dark' ? '#1C1C1E' : '#FFFFFF' },
+                      headerTintColor: colorScheme === 'dark' ? '#FFFFFF' : '#000000',
+                      headerTitleStyle: { fontWeight: '600' }
+                    }} 
+                  />
+                  <Stack.Screen 
+                    name="order-confirmation" 
+                    options={{ 
+                      headerShown: true,
+                      title: 'Order Confirmation',
+                      headerStyle: { backgroundColor: colorScheme === 'dark' ? '#1C1C1E' : '#FFFFFF' },
+                      headerTintColor: colorScheme === 'dark' ? '#FFFFFF' : '#000000',
+                      headerTitleStyle: { fontWeight: '600' }
+                    }} 
+                  />
                   <Stack.Screen name="+not-found" />
                 </Stack>
                 <StatusBar style="auto" />

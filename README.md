@@ -148,7 +148,7 @@ The mobile application is developed as a separate repository with React Native a
    cp .env.example .env
 
    # Update API URL in .env
-   EXPO_PUBLIC_API_URL=http://your-api-domain.com/api
+   EXPO_PUBLIC_API_URL=https://savedfeast.app/api
    ```
 
 4. **Start development server**
@@ -253,7 +253,7 @@ Create a `.env` file in the root directory:
 
 ```env
 # API Configuration
-EXPO_PUBLIC_API_URL=http://localhost:8000/api
+EXPO_PUBLIC_API_URL=https://savedfeast.app/api
 
 # App Configuration
 EXPO_PUBLIC_APP_NAME=SavedFeast
@@ -270,7 +270,7 @@ Update the API base URL in `lib/api.ts`:
 
 ```typescript
 const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000/api';
+  process.env.EXPO_PUBLIC_API_URL || 'https://savedfeast.app/api';
 ```
 
 ## 🧪 Testing

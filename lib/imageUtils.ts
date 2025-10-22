@@ -19,7 +19,7 @@ export const formatImageUrl = (imagePath: string | null | undefined): string | n
   const baseURL = api.defaults.baseURL;
   
   // Remove '/api' from the base URL to get the server root
-  const serverRoot = baseURL?.replace('/api', '') || 'http://192.168.1.20:8000';
+  const serverRoot = baseURL?.replace('/api', '') || 'https://savedfeast.app';
   
   // Handle different path formats
   if (imagePath.startsWith('/storage/')) {

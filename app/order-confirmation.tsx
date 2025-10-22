@@ -263,9 +263,26 @@ export default function OrderConfirmationScreen() {
               <ThemedText style={styles.infoValue}>#{order.id}</ThemedText>
             </View>
             <View style={styles.infoRow}>
+              <ThemedText style={styles.infoLabel}>Status:</ThemedText>
+              <ThemedText
+                style={[
+                  styles.infoValue,
+                  { color: getStatusColor(orderStatus), fontWeight: 'bold' },
+                ]}
+              >
+                {orderStatus.charAt(0).toUpperCase() + orderStatus.slice(1).toLowerCase()}
+              </ThemedText>
+            </View>
+            <View style={styles.infoRow}>
               <ThemedText style={styles.infoLabel}>Pickup Time:</ThemedText>
               <ThemedText style={styles.infoValue}>
                 {order.pickup_time ? formatPickupTime(order.pickup_time) : 'TBD'}
+              </ThemedText>
+            </View>
+            <View style={styles.infoRow}>
+              <ThemedText style={styles.infoLabel}>Payment Method:</ThemedText>
+              <ThemedText style={styles.infoValue}>
+                {order.payment_method === 'CASH_ON_PICKUP' ? '💵 Cash on Pickup' : '💳 Online Payment'}
               </ThemedText>
             </View>
             <View style={styles.infoRow}>

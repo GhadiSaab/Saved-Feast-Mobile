@@ -9,6 +9,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -118,6 +120,7 @@ class NotificationService {
         sound: 'default',
       },
       trigger: {
+        type: 'date',
         date: scheduledTime,
       },
     });

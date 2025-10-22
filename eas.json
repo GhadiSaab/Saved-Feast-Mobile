@@ -14,13 +14,13 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://staging-api.savedfeast.com/api",
+        "EXPO_PUBLIC_API_URL": "https://savedfeast.app/api",
         "EXPO_PUBLIC_DEBUG_MODE": "false"
       }
     },
     "production": {
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.savedfeast.com/api",
+        "EXPO_PUBLIC_API_URL": "https://savedfeast.app/api",
         "EXPO_PUBLIC_DEBUG_MODE": "false"
       }
     }

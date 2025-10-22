@@ -1,5 +1,5 @@
 import api from './api';
-import * as SecureStore from 'expo-secure-store';
+import { storage } from './storage';
 
 export interface User {
   id: number;
@@ -78,8 +78,8 @@ class AuthService {
       const { user, access_token } = response.data;
 
       // Store token and user data securely
-      await SecureStore.setItemAsync('auth_token', access_token);
-      await SecureStore.setItemAsync('user_data', JSON.stringify(user));
+      await storage.setItemAsync('auth_token', access_token);
+      await storage.setItemAsync('user_data', JSON.stringify(user));
 
       return { user, token: access_token };
     });
@@ -91,8 +91,8 @@ class AuthService {
       const { user, access_token } = response.data;
 
       // Store token and user data securely
-      await SecureStore.setItemAsync('auth_token', access_token);
-      await SecureStore.setItemAsync('user_data', JSON.stringify(user));
+      await storage.setItemAsync('auth_token', access_token);
+      await storage.setItemAsync('user_data', JSON.stringify(user));
 
       return { user, token: access_token };
     });
@@ -111,14 +111,14 @@ class AuthService {
       console.warn('Logout API failed, but clearing local storage:', error);
     } finally {
       // Clear local storage
-      await SecureStore.deleteItemAsync('auth_token');
-      await SecureStore.deleteItemAsync('user_data');
+      await storage.deleteItemAsync('auth_token');
+      await storage.deleteItemAsync('user_data');
     }
   }
 
   async getCurrentUser(): Promise<User | null> {
     try {
-      const token = await SecureStore.getItemAsync('auth_token');
+      const token = await storage.getItemAsync('auth_token');
       console.log('getCurrentUser - token exists:', !!token);
 
       if (!token) {
@@ -141,7 +141,7 @@ class AuthService {
         console.log('getCurrentUser - API response received');
 
         // Update stored user data
-        await SecureStore.setItemAsync('user_data', JSON.stringify(user));
+        await storage.setItemAsync('user_data', JSON.stringify(user));
 
         return user;
       } catch (apiError: any) {
@@ -149,7 +149,7 @@ class AuthService {
 
         // If API call fails, try to get cached user data
         try {
-          const userData = await SecureStore.getItemAsync('user_data');
+          const userData = await storage.getItemAsync('user_data');
           if (userData) {
             const cachedUser = JSON.parse(userData);
             console.log('getCurrentUser - using cached data:', !!cachedUser);
@@ -165,8 +165,8 @@ class AuthService {
             // If it's an auth error (401), clear everything
             if (apiError.response?.status === 401) {
               console.log('Auth error, clearing stored data');
-              await SecureStore.deleteItemAsync('auth_token');
-              await SecureStore.deleteItemAsync('user_data');
+              await storage.deleteItemAsync('auth_token');
+              await storage.deleteItemAsync('user_data');
               return null;
             }
 
@@ -187,7 +187,7 @@ class AuthService {
 
   async isAuthenticated(): Promise<boolean> {
     try {
-      const token = await SecureStore.getItemAsync('auth_token');
+      const token = await storage.getItemAsync('auth_token');
       return !!token;
     } catch (error) {
       console.error('Error checking authentication:', error);
@@ -208,7 +208,7 @@ class AuthService {
       const updatedUser = response.data.user;
 
       // Update stored user data
-      await SecureStore.setItemAsync('user_data', JSON.stringify(updatedUser));
+      await storage.setItemAsync('user_data', JSON.stringify(updatedUser));
 
       return updatedUser;
     });

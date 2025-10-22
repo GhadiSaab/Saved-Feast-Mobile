@@ -1,10 +1,10 @@
 import axios from 'axios';
-import * as SecureStore from 'expo-secure-store';
+import { storage } from './storage';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ||
   (__DEV__
-    ? 'http://172.29.144.1:8000/api' // Use your computer's IP address for mobile access
-    : 'https://your-production-domain.com/api' // Replace with your production URL
+    ? (typeof window !== 'undefined' ? 'https://savedfeast.app/api' : 'http://172.29.144.1:8000/api') // Use production URL for web, local IP for mobile
+    : 'https://savedfeast.app/api' // Replace with your production URL
   );
 
 // Log API configuration for debugging
@@ -27,7 +27,7 @@ const api = axios.create({
 // Request interceptor to add auth token
 api.interceptors.request.use(
   async config => {
-    const token = await SecureStore.getItemAsync('auth_token');
+    const token = await storage.getItemAsync('auth_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -46,8 +46,8 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401) {
       // Token expired or invalid, clear storage and redirect to login
-      await SecureStore.deleteItemAsync('auth_token');
-      await SecureStore.deleteItemAsync('user_data');
+      await storage.deleteItemAsync('auth_token');
+      await storage.deleteItemAsync('user_data');
       // You might want to trigger a navigation to login here
     } else if (error.code === 'NETWORK_ERROR' || !error.response) {
       // Network error or no response

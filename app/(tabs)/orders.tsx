@@ -494,13 +494,6 @@ export default function OrdersTabScreen() {
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.background }]}
     >
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>
-          My Orders
-        </Text>
-      </View>
-
       {/* Orders List */}
       {ordersData?.data && Array.isArray(ordersData.data) && ordersData.data.length > 0 ? (
         <FlatList
@@ -537,14 +530,6 @@ export default function OrdersTabScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
   },
   listContent: {
     paddingHorizontal: 16,

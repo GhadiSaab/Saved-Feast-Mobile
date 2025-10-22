@@ -130,6 +130,29 @@ export default function OrdersScreen() {
     ]);
   };
 
+  const handleRequestCancellation = async (orderId: number) => {
+    Alert.alert(
+      'Request Cancellation', 
+      'Your order has been accepted by the restaurant. You can request cancellation, but it may not be possible if preparation has started.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Request Cancellation',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await orderService.cancelMyOrder(orderId);
+              refetch();
+              Alert.alert('Success', 'Cancellation request submitted. The restaurant will be notified.');
+            } catch (error: any) {
+              Alert.alert('Error', error.message || 'Failed to submit cancellation request');
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const handleClaimOrder = (order: any) => {
     setSelectedOrderForClaim(order);
     setClaimModalVisible(true);
@@ -232,6 +255,31 @@ export default function OrdersScreen() {
             </Text>
           </View>
 
+          {/* Restaurant Information */}
+          {item.items && item.items.length > 0 && item.items[0].meal.restaurant && (
+            <View style={styles.restaurantInfo}>
+              <View style={styles.restaurantHeader}>
+                <Ionicons name="restaurant" size={20} color={colors.primary} />
+                <Text style={[styles.restaurantTitle, { color: colors.text }]}>
+                  Restaurant Information
+                </Text>
+              </View>
+              <Text style={[styles.restaurantName, { color: colors.text }]}>
+                {item.items[0].meal.restaurant.name}
+              </Text>
+              {item.items[0].meal.restaurant.address && (
+                <Text style={[styles.restaurantAddress, { color: colors.text }]}>
+                  📍 {item.items[0].meal.restaurant.address}
+                </Text>
+              )}
+              {item.items[0].meal.restaurant.phone && (
+                <Text style={[styles.restaurantPhone, { color: colors.text }]}>
+                  📞 {item.items[0].meal.restaurant.phone}
+                </Text>
+              )}
+            </View>
+          )}
+
           {/* Order Items */}
           {item.items && item.items.length > 0 ? item.items.map((orderItem: any, index: number) => (
             <View key={index} style={styles.orderItem}>
@@ -273,15 +321,41 @@ export default function OrdersScreen() {
                 <Text style={[styles.itemQuantity, { color: colors.text }]}>
                   Qty: {orderItem.quantity}
                 </Text>
+                <Text style={[styles.itemPrice, { color: colors.primary }]}>
+                  €{orderItem.price ? orderItem.price.toFixed(2) : '0.00'} each
+                </Text>
               </View>
 
-              <Text style={[styles.itemPrice, { color: colors.primary }]}>
-                €{orderItem.price ? orderItem.price.toFixed(2) : '0.00'}
+              <Text style={[styles.itemTotalPrice, { color: colors.primary }]}>
+                €{((Number(orderItem.price) || 0) * (orderItem.quantity || 0)).toFixed(2)}
               </Text>
             </View>
           )) : (
             <Text style={[styles.noItemsText, { color: colors.text }]}>No items found</Text>
           )}
+
+          {/* Payment Information */}
+          <View style={styles.paymentInfo}>
+            <Text style={[styles.paymentTitle, { color: colors.text }]}>
+              Payment Information
+            </Text>
+            <View style={styles.paymentRow}>
+              <Text style={[styles.paymentLabel, { color: colors.text }]}>
+                Payment Method:
+              </Text>
+              <Text style={[styles.paymentValue, { color: colors.text }]}>
+                {item.payment_method === 'CASH_ON_PICKUP' ? '💵 Cash on Pickup' : '💳 Online Payment'}
+              </Text>
+            </View>
+            <View style={styles.paymentRow}>
+              <Text style={[styles.paymentLabel, { color: colors.text }]}>
+                Total Amount:
+              </Text>
+              <Text style={[styles.paymentTotal, { color: colors.primary }]}>
+                €{item.total_amount ? Number(item.total_amount).toFixed(2) : '0.00'}
+              </Text>
+            </View>
+          </View>
 
           {/* Order Notes */}
           {item.notes && (
@@ -345,6 +419,18 @@ export default function OrdersScreen() {
               <Button
                 title="Cancel Order"
                 onPress={() => handleCancelOrder(item.id)}
+                variant="outline"
+                size="small"
+                style={styles.cancelButton}
+              />
+            </View>
+          )}
+
+          {item.status === 'ACCEPTED' && (
+            <View style={styles.actionButtons}>
+              <Button
+                title="Request Cancellation"
+                onPress={() => handleRequestCancellation(item.id)}
                 variant="outline"
                 size="small"
                 style={styles.cancelButton}
@@ -628,8 +714,72 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   itemPrice: {
-    fontSize: 14,
+    fontSize: 12,
+    fontWeight: '500',
+    opacity: 0.8,
+  },
+  itemTotalPrice: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  restaurantInfo: {
+    marginBottom: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  restaurantHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  restaurantTitle: {
+    fontSize: 16,
     fontWeight: '600',
+    marginLeft: 8,
+  },
+  restaurantName: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  restaurantAddress: {
+    fontSize: 14,
+    opacity: 0.8,
+    marginBottom: 2,
+  },
+  restaurantPhone: {
+    fontSize: 14,
+    opacity: 0.8,
+  },
+  paymentInfo: {
+    marginTop: 16,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
+  },
+  paymentTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  paymentRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  paymentLabel: {
+    fontSize: 14,
+    opacity: 0.8,
+  },
+  paymentValue: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  paymentTotal: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   notesSection: {
     marginTop: 12,

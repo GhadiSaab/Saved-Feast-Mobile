@@ -3,7 +3,7 @@ import { formatImageUrl } from '@/lib/imageUtils';
 // Mock the api module
 jest.mock('@/lib/api', () => ({
   defaults: {
-    baseURL: 'http://192.168.1.20:8000/api',
+    baseURL: 'https://savedfeast.app/api',
   },
 }));
 
@@ -25,25 +25,25 @@ describe('ImageUtils', () => {
 
     it('should format Laravel storage paths correctly', () => {
       const storagePath = '/storage/meals/image.jpg';
-      const expected = 'http://192.168.1.20:8000/storage/meals/image.jpg';
+      const expected = 'https://savedfeast.app/storage/meals/image.jpg';
       expect(formatImageUrl(storagePath)).toBe(expected);
     });
 
     it('should format storage paths without leading slash', () => {
       const storagePath = 'storage/meals/image.jpg';
-      const expected = 'http://192.168.1.20:8000/storage/meals/image.jpg';
+      const expected = 'https://savedfeast.app/storage/meals/image.jpg';
       expect(formatImageUrl(storagePath)).toBe(expected);
     });
 
     it('should format relative paths correctly', () => {
       const relativePath = 'meals/image.jpg';
-      const expected = 'http://192.168.1.20:8000/meals/image.jpg';
+      const expected = 'https://savedfeast.app/meals/image.jpg';
       expect(formatImageUrl(relativePath)).toBe(expected);
     });
 
     it('should handle default case for unknown paths', () => {
       const unknownPath = 'some/path/image.jpg';
-      const expected = 'http://192.168.1.20:8000/some/path/image.jpg';
+      const expected = 'https://savedfeast.app/some/path/image.jpg';
       expect(formatImageUrl(unknownPath)).toBe(expected);
     });
   });

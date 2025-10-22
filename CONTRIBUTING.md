@@ -68,7 +68,7 @@ npm install
 cp env.example .env
 
 # Update with your configuration
-EXPO_PUBLIC_API_URL=http://localhost:8000/api
+EXPO_PUBLIC_API_URL=https://savedfeast.app/api
 ```
 
 ### 3. Start Development Server
